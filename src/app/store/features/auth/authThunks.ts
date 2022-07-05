@@ -2,19 +2,15 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RoleCode } from 'constants/roles';
 import { User } from 'modals/User';
 import { getAccessToken, setAccessToken } from 'utils/auth';
+import { loginApi, LoginParam } from 'app/api/apiAuth';
 
 export const loginThunk = createAsyncThunk(
   'auth/login',
-  async (role: RoleCode) => {
+  async (param: LoginParam) => {
     // fake login
-    await new Promise((res) => {
-      setTimeout(() => {
-        setAccessToken(`${role}_This_is_fake_token`);
-        res(role);
-      }, 1000);
-    });
+    const { data } = await loginApi(param);
+    setAccessToken(data.access_token);
     window.location.href = '/';
-    return role;
   },
 );
 

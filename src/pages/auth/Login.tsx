@@ -30,7 +30,7 @@ const Login: FC = () => {
   };
 
   const onLogin = () => {
-    dispatch(loginThunk(role));
+    dispatch(loginThunk({ email: 'duy@gmail.com', password: '123456' }));
   };
 
   return (
