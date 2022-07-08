@@ -12,8 +12,6 @@ export const loginThunk = createAsyncThunk(
 );
 
 export const getUserThunk = createAsyncThunk('auth/getUser', async () => {
-  let token = getAccessToken();
-  token = token ? `Bearer ${token}` : '';
-  const { data } = await getUserApi(token);
+  const { data } = await getUserApi();
   return data;
 });

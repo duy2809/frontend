@@ -10,7 +10,7 @@ export const api = axios.create({
   },
 });
 
-axios.interceptors.request.use((req) => {
+api.interceptors.request.use((req) => {
   const token = getAccessToken();
   if (token) {
     req.headers = {
@@ -21,6 +21,7 @@ axios.interceptors.request.use((req) => {
   return req;
 });
 
-axios.interceptors.response.use(() => {
+axios.interceptors.response.use(
+  (res) => res,
   // Do something with response data or handle error
-});
+);

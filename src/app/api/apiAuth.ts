@@ -15,7 +15,5 @@ export const loginApi = async (
   param: LoginParam,
 ): Promise<AxiosResponse<LoginRespone>> => api.post('/auth/login', param);
 
-export const getUserApi = async (token: string): Promise<AxiosResponse<User>> =>
-  api.get('auth/getUser', {
-    headers: { Authorization: token },
-  });
+export const getUserApi = async (): Promise<AxiosResponse<User>> =>
+  api.get('auth/getUser');
