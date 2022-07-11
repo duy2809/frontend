@@ -4,13 +4,10 @@ import {
   Box,
   Button,
   CircularProgress,
-  Grid,
   TextField,
   Typography,
-  Link,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
-import { loginThunk } from 'app/store/features/auth/authThunks';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,27 +15,21 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Link as RouterLink } from 'react-router-dom';
-// import { PASSWORD_REGEX } from 'constants/regex';
+import { postMailThunk } from 'app/store/features/auth/authThunks';
 
 interface FormValue {
   email: string;
-  password: string;
 }
 
-const Login: FC = () => {
+const ForgotPassword: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const login = useAppSelector((state) => state.auth.login);
+  const sendMail = useAppSelector((state) => state.auth.sendMail);
 
   const schema = yup.object().shape({
     email: yup
       .string()
       .email(t('auth.invalid-email'))
-      .required(t('auth.required')),
-    password: yup
-      .string()
-      // .matches(PASSWORD_REGEX, t('auth.invalid-password'))
       .required(t('auth.required')),
   });
 
@@ -49,11 +40,11 @@ const Login: FC = () => {
   } = useForm<FormValue>({ resolver: yupResolver(schema) });
 
   const formSubmitHandler: SubmitHandler<FormValue> = (data: FormValue) =>
-    dispatch(loginThunk(data));
+    dispatch(postMailThunk(data));
 
   return (
     <>
-      <HelmetMeta title={t('login.title')} />
+      <HelmetMeta title={t('forgot-password.title')} />
       <Box
         sx={{
           display: 'flex',
@@ -72,10 +63,13 @@ const Login: FC = () => {
             mb: 4,
           }}
         >
-          {t('login.title')}
+          {t('forgot-password.title')}
         </Typography>
-        {login.error && (
-          <Alert severity="error">{t('auth.passwords-not-match')}</Alert>
+        {sendMail.error && (
+          <Alert severity="error">{t('forgot-password.email-not-exist')}</Alert>
+        )}
+        {sendMail.result && !sendMail.error && (
+          <Alert severity="success">{t('forgot-password.email-sent')}</Alert>
         )}
         <Box
           component="form"
@@ -102,56 +96,23 @@ const Login: FC = () => {
               />
             )}
           />
-          <Controller
-            name="password"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={!!errors.password}
-                helperText={errors.password ? errors.password.message : ''}
-              />
-            )}
-          />
           <Button
             variant="contained"
             type="submit"
-            size="large"
             fullWidth
             sx={{ mt: 4 }}
-            disabled={login.loading}
+            disabled={sendMail.loading}
           >
-            {login.loading ? (
+            {sendMail.loading ? (
               <CircularProgress color="inherit" size={24} />
             ) : (
               t('btn.submit')
             )}
           </Button>
-          <Grid container sx={{ mt: 4 }}>
-            <Grid item xs>
-              <Link component={RouterLink} to="/auth/forgot-password">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link component={RouterLink} to="/auth/sign-up">
-                Do not have an account? Sign Up
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </>
   );
 };
 
-export default Login;
+export default ForgotPassword;

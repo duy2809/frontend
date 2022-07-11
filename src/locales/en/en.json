@@ -34,5 +34,22 @@
     "title": "Login",
     "role": "Role",
     "welcome": "Welcome to Login page"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirm-password": "Confirm password",
+    "name": "Name",
+    "required": "Not be empty",
+    "invalid-email": "Invalid email",
+    "invalid-password": "Minimum 8 characters, including letters and numbers",
+    "passwords-not-match": "Passwords do not match",
+    "loading": "Loading..."
+  },
+  "forgot-password": {
+    "title": "Forgot password?",
+    "hint": "Please input your email!",
+    "email-not-exist": "Your email does not exist! Please try again",
+    "email-sent": "Reset password mail has been sent!"
   }
 }

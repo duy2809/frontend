@@ -1,27 +1,39 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { User } from 'modals/User';
 import { removeAccessToken } from 'utils/auth';
-import { getUserThunk, loginThunk } from './authThunks';
+import { getUserThunk, loginThunk, postMailThunk } from './authThunks';
 
 interface State {
   login: {
     loading: boolean;
+    error: boolean;
   };
   user: {
     data: User | null;
     loading: boolean;
     error: boolean;
   };
+  sendMail: {
+    loading: boolean;
+    error: boolean;
+    result: boolean;
+  };
 }
 
 const initialState: State = {
   login: {
     loading: false,
+    error: false,
   },
   user: {
     data: null,
     loading: false,
     error: false,
+  },
+  sendMail: {
+    loading: false,
+    error: false,
+    result: false,
   },
 };
 
@@ -38,7 +50,10 @@ export const authSlice = createSlice({
     builder.addCase(loginThunk.pending, (state) => {
       state.login.loading = true;
     });
-
+    builder.addCase(loginThunk.rejected, (state) => {
+      state.login.loading = false;
+      state.login.error = true;
+    });
     builder.addCase(getUserThunk.pending, (state) => {
       state.user.loading = true;
     });
@@ -49,6 +64,18 @@ export const authSlice = createSlice({
     builder.addCase(getUserThunk.rejected, (state) => {
       state.user.loading = false;
       state.user.error = true;
+    });
+    builder.addCase(postMailThunk.rejected, (state) => {
+      state.sendMail.loading = false;
+      state.sendMail.error = true;
+    });
+    builder.addCase(postMailThunk.pending, (state) => {
+      state.sendMail.loading = true;
+    });
+    builder.addCase(postMailThunk.fulfilled, (state) => {
+      state.sendMail.loading = false;
+      state.sendMail.result = true;
+      state.sendMail.error = false;
     });
   },
 });

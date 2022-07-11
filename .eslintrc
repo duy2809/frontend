@@ -25,6 +25,7 @@
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/no-unsafe-assignment": "off",
     "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-misused-promises": "off",
     "import/extensions": "off",
     "import/no-extraneous-dependencies": "off",
     "import/no-duplicates": "off",
@@ -42,6 +43,7 @@
     "react/jsx-no-useless-fragment": "off",
     "react/react-in-jsx-scope": "off",
     "react/no-unused-prop-types": "off",
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off"
   }
 }

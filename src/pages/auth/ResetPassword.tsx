@@ -5,9 +5,9 @@ import {
   Button,
   CircularProgress,
   Grid,
+  Link,
   TextField,
   Typography,
-  Link,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { loginThunk } from 'app/store/features/auth/authThunks';
@@ -18,7 +18,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { Link as RouterLink } from 'react-router-dom';
 // import { PASSWORD_REGEX } from 'constants/regex';
 
 interface FormValue {
@@ -26,7 +25,7 @@ interface FormValue {
   password: string;
 }
 
-const Login: FC = () => {
+const ResetPassword: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const login = useAppSelector((state) => state.auth.login);
@@ -74,8 +73,10 @@ const Login: FC = () => {
         >
           {t('login.title')}
         </Typography>
-        {login.error && (
+        {login.error ? (
           <Alert severity="error">{t('auth.passwords-not-match')}</Alert>
+        ) : (
+          <Alert severity="info">{t('login.welcome')}</Alert>
         )}
         <Box
           component="form"
@@ -125,7 +126,6 @@ const Login: FC = () => {
           <Button
             variant="contained"
             type="submit"
-            size="large"
             fullWidth
             sx={{ mt: 4 }}
             disabled={login.loading}
@@ -138,12 +138,12 @@ const Login: FC = () => {
           </Button>
           <Grid container sx={{ mt: 4 }}>
             <Grid item xs>
-              <Link component={RouterLink} to="/auth/forgot-password">
+              <Link href="/" variant="body2">
                 Forgot password?
               </Link>
             </Grid>
             <Grid item>
-              <Link component={RouterLink} to="/auth/sign-up">
+              <Link href="/" variant="body2">
                 Do not have an account? Sign Up
               </Link>
             </Grid>
@@ -154,4 +154,4 @@ const Login: FC = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;
