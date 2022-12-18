@@ -1,6 +1,5 @@
 import {
   Alert,
-  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -14,12 +13,13 @@ import { loginThunk } from 'app/store/features/auth/authThunks';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link as RouterLink } from 'react-router-dom';
 // import { PASSWORD_REGEX } from 'constants/regex';
+import background from 'assets/images/background.jpg';
+import Image from 'components/common/Image';
 
 interface FormValue {
   email: string;
@@ -54,100 +54,106 @@ const Login: FC = () => {
   return (
     <>
       <HelmetMeta title={t('login.title')} />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          mt: 4,
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: 'green' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography
-          variant="h4"
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ width: '55%', height: '93vh' }}>
+          <Image
+            src={background}
+            sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
+          />
+        </Box>
+        <Box
           sx={{
-            textAlign: 'center',
-            mb: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '45%',
+            justifyContent: 'center',
           }}
         >
-          {t('login.title')}
-        </Typography>
-        {login.error && (
-          <Alert severity="error">{t('auth.passwords-not-match')}</Alert>
-        )}
-        <Box
-          component="form"
-          onSubmit={handleSubmit(formSubmitHandler)}
-          sx={{ mt: 1 }}
-        >
-          <Controller
-            name="email"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                error={!!errors.email}
-                helperText={errors.email ? errors.email.message : ''}
-              />
-            )}
-          />
-          <Controller
-            name="password"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={!!errors.password}
-                helperText={errors.password ? errors.password.message : ''}
-              />
-            )}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            size="large"
-            fullWidth
-            sx={{ mt: 4 }}
-            disabled={login.loading}
+          <Typography
+            variant="h4"
+            sx={{
+              textAlign: 'center',
+              mb: 4,
+            }}
           >
-            {login.loading ? (
-              <CircularProgress color="inherit" size={24} />
-            ) : (
-              t('btn.submit')
-            )}
-          </Button>
-          <Grid container sx={{ mt: 4 }}>
-            <Grid item xs>
-              <Link component={RouterLink} to="/auth/forgot-password">
-                Forgot password?
-              </Link>
+            {t('login.title')}
+          </Typography>
+          {login.error && (
+            <Alert severity="error">{t('auth.passwords-not-match')}</Alert>
+          )}
+          <Box
+            component="form"
+            onSubmit={handleSubmit(formSubmitHandler)}
+            sx={{ mt: 1, width: '50%' }}
+          >
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  error={!!errors.email}
+                  helperText={errors.email ? errors.email.message : ''}
+                />
+              )}
+            />
+            <Controller
+              name="password"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password.message : ''}
+                />
+              )}
+            />
+            <Button
+              variant="contained"
+              type="submit"
+              size="large"
+              fullWidth
+              sx={{ mt: 4 }}
+              disabled={login.loading}
+            >
+              {login.loading ? (
+                <CircularProgress color="inherit" size={24} />
+              ) : (
+                t('btn.submit')
+              )}
+            </Button>
+            <Grid container sx={{ mt: 4 }}>
+              <Grid item xs>
+                <Link component={RouterLink} to="/auth/forgot-password">
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link component={RouterLink} to="/auth/sign-up">
+                  Do not have an account? Sign Up
+                </Link>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Link component={RouterLink} to="/auth/sign-up">
-                Do not have an account? Sign Up
-              </Link>
-            </Grid>
-          </Grid>
+          </Box>
         </Box>
       </Box>
     </>

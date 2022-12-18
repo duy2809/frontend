@@ -9,11 +9,11 @@ const PublicLayout: FC = () => {
   const { t } = useTranslation();
 
   return (
-    <Container>
-      <Box sx={{ py: 2 }}>
+    <Container maxWidth='xl'>
+      {/* <Box sx={{ py: 2 }}>
         <Typography variant="h4">{t('layouts.public.title')}</Typography>
       </Box>
-      <Typography variant="body1">{t('layouts.public.description')}</Typography>
+      <Typography variant="body1">{t('layouts.public.description')}</Typography> */}
       <Outlet />
     </Container>
   );
