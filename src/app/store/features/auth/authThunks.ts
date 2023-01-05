@@ -6,6 +6,8 @@ import {
   LoginParam,
   postMailApi,
   MailParam,
+  ResetPasswordParam,
+  postResetPasswordApi,
 } from 'app/api/apiAuth';
 
 export const loginThunk = createAsyncThunk(
@@ -26,5 +28,13 @@ export const postMailThunk = createAsyncThunk(
   'auth/forgot-password',
   async (param: MailParam) => {
     await postMailApi(param);
+  },
+);
+
+export const postResetPasswordThunk = createAsyncThunk(
+  'users/reset-password',
+  async (param: ResetPasswordParam) => {
+    await postResetPasswordApi(param);
+    window.location.href = '/';
   },
 );

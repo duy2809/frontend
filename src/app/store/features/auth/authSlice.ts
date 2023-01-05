@@ -1,7 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { User } from 'modals/User';
 import { removeAccessToken } from 'utils/auth';
-import { getUserThunk, loginThunk, postMailThunk } from './authThunks';
+import {
+  getUserThunk,
+  loginThunk,
+  postMailThunk,
+  postResetPasswordThunk,
+} from './authThunks';
 
 interface State {
   login: {
@@ -17,6 +22,10 @@ interface State {
     loading: boolean;
     error: boolean;
     result: boolean;
+  };
+  resetPassword: {
+    loading: boolean;
+    error: boolean;
   };
 }
 
@@ -34,6 +43,10 @@ const initialState: State = {
     loading: false,
     error: false,
     result: false,
+  },
+  resetPassword: {
+    loading: false,
+    error: false,
   },
 };
 
@@ -76,6 +89,16 @@ export const authSlice = createSlice({
       state.sendMail.loading = false;
       state.sendMail.result = true;
       state.sendMail.error = false;
+    });
+    builder.addCase(postResetPasswordThunk.pending, (state) => {
+      state.resetPassword.loading = true;
+    });
+    builder.addCase(postResetPasswordThunk.rejected, (state) => {
+      state.resetPassword.loading = false;
+      state.resetPassword.error = true;
+    });
+    builder.addCase(postResetPasswordThunk.fulfilled, (state) => {
+      state.resetPassword.loading = false;
     });
   },
 });

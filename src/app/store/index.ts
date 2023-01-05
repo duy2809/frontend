@@ -2,11 +2,13 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { CurriedGetDefaultMiddleware } from '@reduxjs/toolkit/dist/getDefaultMiddleware';
 import logger from 'redux-logger';
 import authReducer from './features/auth/authSlice';
+import cartReducer from './features/cart/cartSlice';
 
 const production = process.env.NODE_ENV === 'production';
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  cart: cartReducer,
 });
 
 const middleware = (getDefaultMiddleware: CurriedGetDefaultMiddleware) =>

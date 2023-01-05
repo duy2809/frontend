@@ -4,36 +4,38 @@ import {
   Button,
   Container,
   Toolbar,
-  Typography,
   InputBase,
+  Badge,
+  IconButton,
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { logout } from 'app/store/features/auth/authSlice';
 import logo from 'assets/images/logo.png';
 import Image from 'components/common/Image';
-import { FC } from 'react';
-import { Link } from 'react-router-dom';
+import { FC, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-const links = [
-  {
-    path: '/',
-    label: 'Home',
-  },
-  {
-    path: '/dashboard',
-    label: 'Dashboard',
-  },
-  {
-    path: '/profile',
-    label: 'Profile',
-  },
-];
+// const links = [
+//   {
+//     path: '/',
+//     label: 'Home',
+//   },
+//   {
+//     path: '/dashboard',
+//     label: 'Dashboard',
+//   },
+//   {
+//     path: '/profile',
+//     label: 'Profile',
+//   },
+// ];
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -77,16 +79,32 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Navbar: FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
+  const cart = useAppSelector((state) => state.cart.cart);
+  const [value, setValue] = useState('');
 
   const onLogout = () => {
     dispatch(logout());
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value);
+  };
+
+  const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && value) {
+      navigate({
+        pathname: '/search',
+        search: `?q=${value}`,
+      });
+    }
+  };
+
   return (
     <AppBar position="sticky">
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar>
           <IconButton
             size="large"
             edge="start"
@@ -96,14 +114,16 @@ const Navbar: FC = () => {
             <MenuIcon />
           </IconButton>
           <Link to="/">
-            <Image
-              src={logo}
-              alt="logo"
+            <Box
               sx={{
-                width: '148px',
-                ml: '10px'
+                display: 'flex',
+                width: '150px',
+                height: '22px',
+                ml: '10px',
               }}
-            />
+            >
+              <Image src={logo} alt="logo" sx={{ width: '100%' }} />
+            </Box>
           </Link>
           <Search>
             <SearchIconWrapper>
@@ -112,6 +132,9 @@ const Navbar: FC = () => {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              defaultValue={value}
+              onChange={handleChange}
+              onKeyDown={handleEnter}
             />
           </Search>
           <Box sx={{ flexGrow: 1, px: 4, display: 'flex' }}>
@@ -122,23 +145,44 @@ const Navbar: FC = () => {
             ))} */}
           </Box>
           {user.data ? (
-            <Button color="inherit" variant="text" onClick={onLogout}>
-              Logout
-            </Button>
-          ) : (
-            <Link to="/auth/login">
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {user.data.name && (
+                <Button
+                  color="inherit"
+                  variant="text"
+                  startIcon={<AccountCircle />}
+                  sx={{ display: 'flex', alignItems: 'center', mr: 3 }}
+                >
+                  Welcome, {user.data.name}
+                </Button>
+              )}
               <Button
                 color="inherit"
                 variant="text"
-                startIcon={<AccountCircle />}
+                onClick={onLogout}
+                startIcon={<LogoutIcon />}
+              >
+                Logout
+              </Button>
+            </Box>
+          ) : (
+            <Link to="/auth/login">
+              <Button
+                color="secondary"
+                variant="text"
+                startIcon={<LoginIcon />}
               >
                 Login
               </Button>
             </Link>
           )}
-          <IconButton size="large" edge="end" color="inherit">
-            <ShoppingCartIcon />
-          </IconButton>
+          <Link to="/cart">
+            <IconButton size="large" edge="end" color="secondary">
+              <Badge badgeContent={cart.length} color="error">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          </Link>
         </Toolbar>
       </Container>
     </AppBar>

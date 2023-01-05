@@ -1,153 +1,156 @@
 import {
   Alert,
-  Avatar,
   Box,
   Button,
   CircularProgress,
-  Grid,
-  Link,
   TextField,
   Typography,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
-import { loginThunk } from 'app/store/features/auth/authThunks';
+import { postResetPasswordThunk } from 'app/store/features/auth/authThunks';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { useSearchParams } from 'react-router-dom';
 // import { PASSWORD_REGEX } from 'constants/regex';
+import background from 'assets/images/background.jpg';
+import Image from 'components/common/Image';
 
-interface FormValue {
-  email: string;
+interface ResetPasswordForm {
   password: string;
+  confirm_password: string;
 }
 
 const ResetPassword: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const login = useAppSelector((state) => state.auth.login);
+  const resetPassword = useAppSelector((state) => state.auth.resetPassword);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const token = searchParams.get('token');
 
   const schema = yup.object().shape({
-    email: yup
-      .string()
-      .email(t('auth.invalid-email'))
-      .required(t('auth.required')),
-    password: yup
+    password: yup.string().required(t('auth.required')),
+    confirm_password: yup
       .string()
       // .matches(PASSWORD_REGEX, t('auth.invalid-password'))
-      .required(t('auth.required')),
+      .required(t('auth.required'))
+      .oneOf([yup.ref('password'), null], 'Password must match'),
   });
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormValue>({ resolver: yupResolver(schema) });
+  } = useForm<ResetPasswordForm>({ resolver: yupResolver(schema) });
 
-  const formSubmitHandler: SubmitHandler<FormValue> = (data: FormValue) =>
-    dispatch(loginThunk(data));
+  const formSubmitHandler: SubmitHandler<ResetPasswordForm> = (
+    data: ResetPasswordForm,
+  ) =>
+    dispatch(
+      postResetPasswordThunk({
+        token,
+        new_password: data.password,
+      }),
+    );
 
   return (
     <>
-      <HelmetMeta title={t('login.title')} />
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          mt: 4,
-        }}
-      >
-        <Avatar sx={{ m: 1, bgcolor: 'green' }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography
-          variant="h4"
+      <HelmetMeta title="Reset password" />
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ width: '50%', height: '93vh' }}>
+          <Image
+            src={background}
+            sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
+          />
+        </Box>
+        <Box
           sx={{
-            textAlign: 'center',
-            mb: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '45%',
+            justifyContent: 'center',
           }}
         >
-          {t('login.title')}
-        </Typography>
-        {login.error ? (
-          <Alert severity="error">{t('auth.passwords-not-match')}</Alert>
-        ) : (
-          <Alert severity="info">{t('login.welcome')}</Alert>
-        )}
-        <Box
-          component="form"
-          onSubmit={handleSubmit(formSubmitHandler)}
-          sx={{ mt: 1 }}
-        >
-          <Controller
-            name="email"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                error={!!errors.email}
-                helperText={errors.email ? errors.email.message : ''}
-              />
-            )}
-          />
-          <Controller
-            name="password"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <TextField
-                {...field}
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                error={!!errors.password}
-                helperText={errors.password ? errors.password.message : ''}
-              />
-            )}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            fullWidth
-            sx={{ mt: 4 }}
-            disabled={login.loading}
+          <Typography
+            variant="h4"
+            sx={{
+              textAlign: 'center',
+              mb: 4,
+            }}
           >
-            {login.loading ? (
-              <CircularProgress color="inherit" size={24} />
-            ) : (
-              t('btn.submit')
-            )}
-          </Button>
-          <Grid container sx={{ mt: 4 }}>
-            <Grid item xs>
-              <Link href="/" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="/" variant="body2">
-                Do not have an account? Sign Up
-              </Link>
-            </Grid>
-          </Grid>
+            Reset password
+          </Typography>
+          {resetPassword.error && (
+            <Alert severity="error">Reset password failed!</Alert>
+          )}
+          <Box
+            component="form"
+            onSubmit={handleSubmit(formSubmitHandler)}
+            sx={{ mt: 1, width: '50%' }}
+          >
+            <Controller
+              name="password"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password.message : ''}
+                />
+              )}
+            />
+            <Controller
+              name="confirm_password"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="confirm_password"
+                  label="Confirm password"
+                  type="password"
+                  id="confirm_password"
+                  autoComplete="current-password"
+                  error={!!errors.confirm_password}
+                  helperText={
+                    errors.confirm_password
+                      ? errors.confirm_password.message
+                      : ''
+                  }
+                />
+              )}
+            />
+            <Button
+              variant="contained"
+              type="submit"
+              size="large"
+              fullWidth
+              sx={{ mt: 4 }}
+              disabled={resetPassword.loading}
+            >
+              {resetPassword.loading ? (
+                <CircularProgress color="inherit" size={24} />
+              ) : (
+                t('btn.submit')
+              )}
+            </Button>
+          </Box>
         </Box>
       </Box>
     </>

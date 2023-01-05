@@ -1,3 +1,5 @@
+import { ItemCart } from 'app/store/features/cart/cartSlice';
+
 export const isEmpty = (value: unknown) => {
   if (value === undefined || value === null) {
     return true;
@@ -17,3 +19,21 @@ export const intersection = (arr1: [], arr2: []) =>
 export function deepClone<T>(obj: T) {
   return structuredClone(obj) as T;
 }
+
+export const calculateSum = (list: ItemCart[]) => {
+  let sum = 0;
+  list.forEach((item) => {
+    sum += item.price * item.quantity;
+  });
+  return sum;
+};
+
+export const formatPrice = (price: number | undefined) => {
+  if (price) {
+    return price.toLocaleString('vi', {
+      style: 'currency',
+      currency: 'VND',
+    });
+  }
+  return '';
+};

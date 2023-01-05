@@ -1,21 +1,12 @@
 // Demo component
 
 import { FC } from 'react';
-import { Box, CircularProgress, Container } from '@mui/material';
+import { Box, LinearProgress } from '@mui/material';
 
 const Fallback: FC = () => (
-  <Container>
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        width: '100%',
-        py: 4,
-      }}
-    >
-      <CircularProgress />
-    </Box>
-  </Container>
+  <Box sx={{ width: '100%' }}>
+    <LinearProgress />
+  </Box>
 );
 
 export default Fallback;

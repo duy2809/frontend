@@ -20,6 +20,24 @@ export const routes: RouteObject[] = [
         element: <PublicRoute component={() => import('pages/Home')} />,
       },
       {
+        path: 'office-laptops',
+        element: <PublicRoute component={() => import('pages/OfficeLaptop')} />,
+      },
+      {
+        path: 'detail/:id',
+        element: (
+          <PublicRoute component={() => import('pages/ProductDetail')} />
+        ),
+      },
+      {
+        path: 'search',
+        element: <PublicRoute component={() => import('pages/Search')} />,
+      },
+      {
+        path: 'cart',
+        element: <PublicRoute component={() => import('pages/Cart')} />,
+      },
+      {
         path: '*',
         element: <PublicRoute component={() => import('pages/Page404')} />,
       },
