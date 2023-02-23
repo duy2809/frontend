@@ -38,6 +38,10 @@ export const routes: RouteObject[] = [
         element: <PublicRoute component={() => import('pages/Cart')} />,
       },
       {
+        path: 'build-pc',
+        element: <PublicRoute component={() => import('pages/BuildPC')} />,
+      },
+      {
         path: '*',
         element: <PublicRoute component={() => import('pages/Page404')} />,
       },

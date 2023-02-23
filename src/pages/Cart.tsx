@@ -159,13 +159,13 @@ const Cart: FC = () => {
                     }}
                   >
                     <ProductName align="left">{name}</ProductName>
-                    <IconButton aria-label="remove">
-                      <RemoveIcon
-                        fontSize="inherit"
-                        onClick={() => {
-                          dispatch(decrementQuantity(id));
-                        }}
-                      />
+                    <IconButton
+                      aria-label="remove"
+                      onClick={() => {
+                        dispatch(decrementQuantity(id));
+                      }}
+                    >
+                      <RemoveIcon fontSize="inherit" />
                     </IconButton>
                     <ProductQuantity>{quantity}</ProductQuantity>
                     <IconButton

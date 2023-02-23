@@ -29,11 +29,36 @@ export const calculateSum = (list: ItemCart[]) => {
 };
 
 export const formatPrice = (price: number | undefined) => {
-  if (price) {
+  if (price || price === 0) {
     return price.toLocaleString('vi', {
       style: 'currency',
       currency: 'VND',
     });
   }
-  return '';
+  return price;
+};
+
+// export const toCamelCase = (input: string): string =>
+//   // Loại bỏ dấu cách và chuyển các ký tự đầu tiên thành chữ thường
+//   input
+//     .trim()
+//     .toLowerCase()
+//     // Chuyển đổi chữ thường thành chữ hoa
+//     .replace(/[-_]+/g, ' ')
+//     .replace(/ (.)/g, ($1) => $1.toUpperCase())
+//     // Xóa dấu cách và ký tự gạch ngang
+//     .replace(/ /g, '');
+
+function capitalizeFirstThree(str: string): string {
+  if (!str) return '';
+  if (str.length <= 3) return str.toUpperCase();
+  return str.slice(0, 3).toUpperCase() + str.slice(3);
+}
+
+export const toTitleCase = (camelCase: string): string => {
+  const result = camelCase.replace(/([A-Z])/g, ' $1');
+  if (result.includes('cpu')) {
+    return capitalizeFirstThree(result);
+  }
+  return result.charAt(0).toUpperCase() + result.slice(1);
 };
