@@ -18,7 +18,19 @@ import { FC, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HelmetMeta from 'components/common/HelmetMeta';
 
-import { cpuListData, motherboardListData } from 'utils/data';
+import {
+  cpuData,
+  motherboardData,
+  memoryData,
+  storageData,
+  videocardData,
+  cpucoolerData,
+  caseData,
+  powersupplyData,
+  osData,
+  monitorData,
+  expansioncardData,
+} from 'utils/data';
 import { formatPrice, toTitleCase } from 'utils/functions';
 import Image from 'components/common/Image';
 
@@ -33,7 +45,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
-import { Product } from 'utils/data';
+import { IProduct } from 'utils/data';
 import { useAppDispatch } from 'app/hooks/redux';
 import { addToCart } from 'app/store/features/cart/cartSlice';
 
@@ -82,7 +94,9 @@ const SeletedItemWrapper = styled(Box)({
 });
 
 const ImageWrapper = styled(Box)({
-  width: 180,
+  width: 170,
+  padding: 10,
+  marginRight: 5,
 });
 
 const ItemImage = styled(Image)({
@@ -106,7 +120,7 @@ const ProductPrice = styled(ProductText)({
 const sumPrice = (system: System): number => {
   let sum = 0;
   const arraySystem = Object.values(system);
-  arraySystem.forEach((item: Item | null) => {
+  arraySystem.forEach((item: IProduct | null) => {
     if (item) sum += item.price;
   });
   return sum;
@@ -114,18 +128,7 @@ const sumPrice = (system: System): number => {
 
 type Component = string;
 
-type Item = {
-  id: number;
-  name: string;
-  price: number;
-  // eslint-disable-next-line
-  specs: any;
-  descriptions: string[];
-  quantity: number;
-  images: string[];
-};
-
-interface CPU extends Item {
+interface ICPU extends IProduct {
   specs: {
     model: {
       brand: string;
@@ -140,7 +143,7 @@ interface CPU extends Item {
   };
 }
 
-interface Motherboard extends Item {
+interface IMotherboard extends IProduct {
   specs: {
     model: {
       brand: string;
@@ -154,7 +157,7 @@ interface Motherboard extends Item {
 }
 
 interface System {
-  [key: string]: Item | null;
+  [key: string]: IProduct | null;
 }
 
 const rows: Component[] = [
@@ -178,13 +181,22 @@ const ListWrapper = styled(Box)({
   flexDirection: 'column',
 });
 
-const initialSystem: { [key: string]: Item | null } = {};
-const initialData: Item[] = [];
+const initialSystem: { [key: string]: IProduct | null } = {};
+const initialData: IProduct[] = [];
 const initialSocket = '';
 
-const dataMapping: { [key: string]: Item[] } = {
-  cpu: cpuListData,
-  motherboard: motherboardListData,
+const dataMapping: { [key: string]: IProduct[] } = {
+  cpu: cpuData,
+  motherboard: motherboardData,
+  memory: memoryData,
+  storage: storageData,
+  videoCard: videocardData,
+  cpuCooler: cpucoolerData,
+  case: caseData,
+  powerSupply: powersupplyData,
+  operatingSystem: osData,
+  monitor: monitorData,
+  expansionCards: expansioncardData,
 };
 
 const BuildPC: FC = () => {
@@ -199,12 +211,12 @@ const BuildPC: FC = () => {
     setOpen(true);
     setComponent(row);
     if (row === 'cpu' && socket) {
-      const filteredCpuList = cpuListData.filter((cpu) =>
+      const filteredCpuList = cpuData.filter((cpu) =>
         cpu.specs.details.cpuSocketType.includes(socket),
       );
       setData(filteredCpuList);
     } else if (row === 'motherboard' && socket) {
-      const filteredMotherBoardList = motherboardListData.filter((mb) =>
+      const filteredMotherBoardList = motherboardData.filter((mb) =>
         mb.specs.supportedCpu.cpuSocketType.includes(socket),
       );
       setData(filteredMotherBoardList);
@@ -215,15 +227,15 @@ const BuildPC: FC = () => {
     setOpen(false);
   };
 
-  const handleSelect = (item: Item) => {
+  const handleSelect = (item: IProduct) => {
     setSystem({ ...system, [component]: item });
     if (component === 'cpu') {
       setSocket(
-        (item as CPU).specs.details.cpuSocketType.replace(/Socket /g, ''),
+        (item as ICPU).specs.details.cpuSocketType.replace(/Socket /g, ''),
       );
     } else if (component === 'motherboard') {
       setSocket(
-        (item as Motherboard).specs.supportedCpu.cpuSocketType
+        (item as IMotherboard).specs.supportedCpu.cpuSocketType
           .replace(/\*.*$/, '')
           .trim(),
       );
@@ -275,7 +287,7 @@ const BuildPC: FC = () => {
           </TableHead>
           <TableBody>
             {rows.map((row, index) => {
-              const selected: Item | null = system[row];
+              const selected: IProduct | null = system[row];
               return (
                 <StyledTableRow key={row}>
                   <StyledTableCell component="th" scope="row" width={450}>
@@ -380,16 +392,9 @@ const BuildPC: FC = () => {
           onClick={() => {
             if (system) {
               const arraySystem = Object.values(system);
-              arraySystem.forEach((item: Item | null) => {
+              arraySystem.forEach((item: IProduct | null) => {
                 if (item) {
-                  const { id, name, images, price } = item;
-                  const product: Product = {
-                    id,
-                    name,
-                    imageUrl: images[0],
-                    price,
-                  };
-                  dispatch(addToCart(product));
+                  dispatch(addToCart(item));
                 }
               });
             }

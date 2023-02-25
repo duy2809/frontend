@@ -4,16 +4,10 @@ import Image from 'components/common/Image';
 import { styled } from '@mui/material/styles';
 import { formatPrice } from 'utils/functions';
 import { Link } from 'react-router-dom';
-
-type Item = {
-  id: number;
-  imageUrl: string;
-  name: string;
-  price: number;
-};
+import { IProduct } from 'utils/data';
 
 type ListProps = {
-  list: Item[];
+  list: IProduct[];
 };
 
 const ProductListWrapper = styled(Box)({
@@ -63,12 +57,12 @@ const ProductPrice = styled(ProductText)({
 const ProductList: FC<ListProps> = ({ list }) => (
   <ProductListWrapper>
     {list.map((item) => {
-      const { imageUrl, name, price } = item;
+      const { images, name, price } = item;
       return (
         <Link to={`/detail/${item.id}`}>
           <ItemWrapper variant="outlined">
             <ImageWrapper>
-              <ItemImage src={imageUrl} />
+              <ItemImage src={images[0]} />
             </ImageWrapper>
             <ProductName noWrap align="center">
               {name}

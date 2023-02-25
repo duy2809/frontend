@@ -1,16 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Product } from 'utils/data';
+import { IProduct } from 'utils/data';
 
-export interface ItemCart {
+export interface CartItem {
   id: number;
-  imageUrl: string;
+  images: string[];
   name: string;
   price: number;
   quantity: number;
+  quantityInCart: number;
 }
 
 interface State {
-  cart: ItemCart[];
+  cart: CartItem[];
 }
 
 const initialState: State = {
@@ -21,27 +22,30 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action: PayloadAction<Product>) => {
+    addToCart: (state, action: PayloadAction<IProduct>) => {
       const itemInCart = state.cart.find(
         (item) => item.id === action.payload.id,
       );
       if (itemInCart) {
-        itemInCart.quantity += 1;
+        itemInCart.quantityInCart += 1;
       } else {
-        state.cart.push({ ...action.payload, quantity: 1 });
+        state.cart.push({
+          ...action.payload,
+          quantityInCart: 1,
+        });
       }
     },
     incrementQuantity: (state, action: PayloadAction<number>) => {
       const itemInCart = state.cart.find((item) => item.id === action.payload);
-      if (itemInCart) itemInCart.quantity += 1;
+      if (itemInCart) itemInCart.quantityInCart += 1;
     },
     decrementQuantity: (state, action: PayloadAction<number>) => {
       const itemInCart = state.cart.find((item) => item.id === action.payload);
       if (itemInCart) {
-        if (itemInCart.quantity === 1) {
-          itemInCart.quantity = 1;
+        if (itemInCart.quantityInCart === 1) {
+          itemInCart.quantityInCart = 1;
         } else {
-          itemInCart.quantity -= 1;
+          itemInCart.quantityInCart -= 1;
         }
       }
     },

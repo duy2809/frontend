@@ -28,7 +28,7 @@ const ResetPassword: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const resetPassword = useAppSelector((state) => state.auth.resetPassword);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const token = searchParams.get('token');
 
   const schema = yup.object().shape({

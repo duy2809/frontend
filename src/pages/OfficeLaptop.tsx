@@ -10,7 +10,8 @@ import { styled } from '@mui/material/styles';
 
 import FilterSelect from 'components/FilterSelect';
 import ProductList from 'components/ProductList';
-import { officeLaptopData, laptopBrandData } from 'utils/data';
+import { laptopBrandData } from 'utils/data';
+import { officeLaptopData } from 'utils/data';
 import Image from 'components/common/Image';
 
 const breadcrumbs = [

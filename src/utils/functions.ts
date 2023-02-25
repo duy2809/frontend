@@ -1,4 +1,4 @@
-import { ItemCart } from 'app/store/features/cart/cartSlice';
+import { CartItem } from 'app/store/features/cart/cartSlice';
 
 export const isEmpty = (value: unknown) => {
   if (value === undefined || value === null) {
@@ -20,10 +20,10 @@ export function deepClone<T>(obj: T) {
   return structuredClone(obj) as T;
 }
 
-export const calculateSum = (list: ItemCart[]) => {
+export const calculateSum = (list: CartItem[]) => {
   let sum = 0;
   list.forEach((item) => {
-    sum += item.price * item.quantity;
+    sum += item.price * item.quantityInCart;
   });
   return sum;
 };

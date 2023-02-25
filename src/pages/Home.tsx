@@ -28,22 +28,33 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper';
+import { Autoplay, Pagination } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'assets/styles/home/styles.css';
 
-import {
-  laptopListData,
-  desktopListData,
-  consoleListData,
-  mouseListData,
-  keyboardListData,
-  storageListData,
-  networkDeviceListData,
-} from 'utils/data';
 import ProductList from 'components/ProductList';
-import bannerList from 'assets/images/home/index';
+import { bannerImages } from 'utils/data';
+import {
+  caseData,
+  consoleData,
+  cpucoolerData,
+  cpuData,
+  gamingDesktopData,
+  gamingLaptopData,
+  keyboardData,
+  memoryData,
+  monitorData,
+  motherboardData,
+  mouseData,
+  networkingData,
+  officeDesktopData,
+  officeLaptopData,
+  osData,
+  powersupplyData,
+  storageData,
+  videocardData,
+} from 'utils/data';
 
 const menus = [
   {
@@ -108,6 +119,27 @@ const menus = [
   },
 ];
 
+const productCategories = [
+  { title: 'OFFICE LAPTOP', data: officeLaptopData },
+  { title: 'GAMING LAPTOP', data: gamingLaptopData },
+  { title: 'OFFICE DESKTOPS', data: officeDesktopData },
+  { title: 'GAMING DESKTOPS', data: gamingDesktopData },
+  { title: 'CPU', data: cpuData },
+  { title: 'MOTHERBOARD', data: motherboardData },
+  { title: 'MEMORY', data: memoryData },
+  { title: 'VIDEO CARDS', data: videocardData },
+  { title: 'CPU COOLER', data: cpucoolerData },
+  { title: 'CASE', data: caseData },
+  { title: 'POWER SUPPLY', data: powersupplyData },
+  { title: 'OPERATING SYSTEM', data: osData },
+  { title: 'MONITORS', data: monitorData },
+  { title: 'CONSOLES', data: consoleData },
+  { title: 'MOUSES', data: mouseData },
+  { title: 'KEYBOARD', data: keyboardData },
+  { title: 'STORAGE', data: storageData },
+  { title: 'NETWORK DEVICES', data: networkingData },
+];
+
 const Home: FC = () => {
   const { t } = useTranslation();
 
@@ -130,42 +162,32 @@ const Home: FC = () => {
             })}
           </List>
         </Box>
-        <Swiper pagination modules={[Pagination]} className="mySwiper">
-          {bannerList?.map((banner) => (
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          className="mySwiper"
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            clickable: true,
+          }}
+        >
+          {bannerImages?.map((banner) => (
             <SwiperSlide>
               <Image src={banner} />
             </SwiperSlide>
           ))}
         </Swiper>
       </Box>
-      <Divider>
-        <Typography variant="h5">LAPTOP</Typography>
-      </Divider>
-      <ProductList list={laptopListData} />
-      <Divider>
-        <Typography variant="h5">DESKTOPS</Typography>
-      </Divider>
-      <ProductList list={desktopListData} />
-      <Divider>
-        <Typography variant="h5">CONSOLES</Typography>
-      </Divider>
-      <ProductList list={consoleListData} />
-      <Divider>
-        <Typography variant="h5">MOUSES</Typography>
-      </Divider>
-      <ProductList list={mouseListData} />
-      <Divider>
-        <Typography variant="h5">KEYBOARD</Typography>
-      </Divider>
-      <ProductList list={keyboardListData} />
-      <Divider>
-        <Typography variant="h5">STORAGE</Typography>
-      </Divider>
-      <ProductList list={storageListData} />
-      <Divider>
-        <Typography variant="h5">NETWORK DEVICES</Typography>
-      </Divider>
-      <ProductList list={networkDeviceListData} />
+      {productCategories.map((category) => (
+        <div key={category.title}>
+          <Divider>
+            <Typography variant="h5">{category.title}</Typography>
+          </Divider>
+          <ProductList list={category.data} />
+        </div>
+      ))}
     </>
   );
 };

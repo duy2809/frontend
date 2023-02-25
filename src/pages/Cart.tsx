@@ -68,7 +68,9 @@ const ItemWrapper = styled(Paper)({
 });
 
 const ImageWrapper = styled(Box)({
-  width: 180,
+  width: 170,
+  padding: 10,
+  marginRight: 5,
 });
 
 const ItemImage = styled(Image)({
@@ -81,7 +83,8 @@ const ProductText = styled(Typography)({
 });
 
 const ProductName = styled(ProductText)({
-  width: '40%',
+  width: '50%',
+  fontSize: 18,
 });
 
 const ProductQuantity = styled(ProductText)({
@@ -144,15 +147,15 @@ const Cart: FC = () => {
         <CartWrapper>
           <CartListWrapper>
             {cart.map((item) => {
-              const { id, name, imageUrl, price, quantity } = item;
+              const { id, name, images, price, quantityInCart } = item;
               return (
                 <ItemWrapper variant="outlined">
                   <ImageWrapper>
-                    <ItemImage src={imageUrl} alt="Product image" />
+                    <ItemImage src={images[0]} alt="Product image" />
                   </ImageWrapper>
                   <Box
                     sx={{
-                      width: '100%',
+                      width: '85%',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-around',
@@ -167,7 +170,7 @@ const Cart: FC = () => {
                     >
                       <RemoveIcon fontSize="inherit" />
                     </IconButton>
-                    <ProductQuantity>{quantity}</ProductQuantity>
+                    <ProductQuantity>{quantityInCart}</ProductQuantity>
                     <IconButton
                       aria-label="add"
                       onClick={() => {
