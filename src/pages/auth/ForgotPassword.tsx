@@ -45,7 +45,7 @@ const ForgotPassword: FC = () => {
   return (
     <>
       <HelmetMeta title={t('forgot-password.title')} />
-      <Box sx={{ display: 'flex' }}>
+      <Box display="flex">
         <Box sx={{ width: '50%', height: '93vh' }}>
           <Image
             src={background}

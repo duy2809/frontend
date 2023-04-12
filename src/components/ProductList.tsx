@@ -57,9 +57,9 @@ const ProductPrice = styled(ProductText)({
 const ProductList: FC<ListProps> = ({ list }) => (
   <ProductListWrapper>
     {list.map((item) => {
-      const { images, name, price } = item;
+      const { images, name, price, id } = item;
       return (
-        <Link to={`/detail/${item.id}`}>
+        <Link to={`/detail/${id}`} key={id}>
           <ItemWrapper variant="outlined">
             <ImageWrapper>
               <ItemImage src={images[0]} />

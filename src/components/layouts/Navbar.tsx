@@ -9,33 +9,19 @@ import {
   IconButton,
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { logout } from 'app/store/features/auth/authSlice';
 import logo from 'assets/images/logo.png';
 import Image from 'components/common/Image';
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
-// const links = [
-//   {
-//     path: '/',
-//     label: 'Home',
-//   },
-//   {
-//     path: '/dashboard',
-//     label: 'Dashboard',
-//   },
-//   {
-//     path: '/profile',
-//     label: 'Profile',
-//   },
-// ];
+import { RoleCode } from 'constants/roles';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -77,7 +63,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const Navbar: FC = () => {
+type ListProps = {
+  admin: boolean;
+};
+
+const Navbar: FC<ListProps> = ({ admin }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((state) => state.auth.user);
@@ -102,24 +92,19 @@ const Navbar: FC = () => {
   };
 
   return (
-    <AppBar position="sticky">
-      <Container maxWidth="xl">
+    <AppBar
+      position="fixed"
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+    >
+      <Container maxWidth={admin ? false : 'xl'}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-          >
-            <MenuIcon />
-          </IconButton>
           <Link to="/">
             <Box
               sx={{
                 display: 'flex',
                 width: '150px',
                 height: '22px',
-                ml: '10px',
+                mr: '50px',
               }}
             >
               <Image src={logo} alt="logo" sx={{ width: '100%' }} />
@@ -137,15 +122,21 @@ const Navbar: FC = () => {
               onKeyDown={handleEnter}
             />
           </Search>
-          <Box sx={{ flexGrow: 1, px: 4, display: 'flex' }}>
-            {/* {links.map((link) => (
-              <Typography key={link.path} sx={{ px: 1 }}>
-                <Link to={link.path}>{link.label}</Link>
-              </Typography>
-            ))} */}
-          </Box>
+          <Box sx={{ flexGrow: 1, px: 4, display: 'flex' }} />
           {user.data ? (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {user.data.role === RoleCode.ADMIN && (
+                <Link to="/admin/dashboard">
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    startIcon={<DashboardIcon />}
+                    sx={{ mr: 3 }}
+                  >
+                    Admin page
+                  </Button>
+                </Link>
+              )}
               {user.data.name && (
                 <Button
                   color="inherit"

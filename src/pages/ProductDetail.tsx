@@ -17,6 +17,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
@@ -25,6 +26,7 @@ import * as React from 'react';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { styled } from '@mui/material/styles';
 import Image from 'components/common/Image';
+import Overview from 'components/Overview';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper';
@@ -37,8 +39,6 @@ import { addToCart } from 'app/store/features/cart/cartSlice';
 import { Link, useParams } from 'react-router-dom';
 import { allProducts } from 'utils/data';
 import { deepClone, formatPrice, toTitleCase } from 'utils/functions';
-
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -136,7 +136,7 @@ const ProductDetail: FC = () => {
       >
         {breadcrumbs}
       </Breadcrumbs>
-      <Box sx={{ display: 'flex' }}>
+      <Box display="flex">
         <ImageWrapper>
           <Swiper
             navigation
@@ -227,6 +227,7 @@ const ProductDetail: FC = () => {
           </Table>
         </TableContainer>
       </Box>
+      <Overview />
     </>
   );
 };

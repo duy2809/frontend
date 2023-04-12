@@ -2,12 +2,17 @@
 
 import { FC } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Container } from '@mui/material';
+import { Container, Box, Toolbar } from '@mui/material';
+import Navbar from './Navbar';
 
 const PublicLayout: FC = () => (
-  <Container maxWidth="xl">
-    <Outlet />
-  </Container>
+  <Box display="flex">
+    <Navbar admin={false} />
+    <Container maxWidth="xl">
+      <Toolbar />
+      <Outlet />
+    </Container>
+  </Box>
 );
 
 export default PublicLayout;

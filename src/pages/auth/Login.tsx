@@ -3,10 +3,10 @@ import {
   Box,
   Button,
   CircularProgress,
-  Grid,
   TextField,
   Typography,
   Link,
+  Paper,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { loginThunk } from 'app/store/features/auth/authThunks';
@@ -18,8 +18,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link as RouterLink } from 'react-router-dom';
 // import { PASSWORD_REGEX } from 'constants/regex';
-import background from 'assets/images/background.jpg';
-import Image from 'components/common/Image';
 
 interface FormValue {
   email: string;
@@ -54,20 +52,22 @@ const Login: FC = () => {
   return (
     <>
       <HelmetMeta title={t('login.title')} />
-      <Box sx={{ display: 'flex' }}>
-        <Box sx={{ width: '50%', height: '93vh' }}>
-          <Image
-            src={background}
-            sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
-          />
-        </Box>
-        <Box
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <Paper
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            width: '45%',
-            justifyContent: 'center',
+            padding: 7,
+            boxShadow: '0px 10px 20px 5px rgba(0,0,0,0.1)',
+            borderRadius: 4,
           }}
         >
           <Typography
@@ -85,7 +85,7 @@ const Login: FC = () => {
           <Box
             component="form"
             onSubmit={handleSubmit(formSubmitHandler)}
-            sx={{ mt: 1, width: '50%' }}
+            sx={{ mt: 1 }}
           >
             <Controller
               name="email"
@@ -141,20 +141,26 @@ const Login: FC = () => {
                 t('btn.submit')
               )}
             </Button>
-            <Grid container sx={{ mt: 4 }}>
-              <Grid item xs>
-                <Link component={RouterLink} to="/auth/forgot-password">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link component={RouterLink} to="/auth/sign-up">
-                  Do not have an account? Sign Up
-                </Link>
-              </Grid>
-            </Grid>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Link
+                component={RouterLink}
+                to="/auth/forgot-password"
+                sx={{ p: 3 }}
+              >
+                Forgot password?
+              </Link>
+              <Link component={RouterLink} to="/auth/sign-up">
+                Do not have an account? Sign up here
+              </Link>
+            </Box>
           </Box>
-        </Box>
+        </Paper>
       </Box>
     </>
   );

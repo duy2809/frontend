@@ -59,7 +59,7 @@ const ResetPassword: FC = () => {
   return (
     <>
       <HelmetMeta title="Reset password" />
-      <Box sx={{ display: 'flex' }}>
+      <Box display="flex">
         <Box sx={{ width: '50%', height: '93vh' }}>
           <Image
             src={background}

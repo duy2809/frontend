@@ -34,7 +34,7 @@ const PrivateRoute: FC<Props> = ({ permissions, component }) => {
         </Suspense>
       );
   }
-  return <Navigate to="/403" />;
+  return <Navigate to="/" />;
 };
 
 export default PrivateRoute;

@@ -1,5 +1,3 @@
-// Demo component
-
 import {
   Typography,
   Box,
@@ -150,9 +148,9 @@ const Home: FC = () => {
         <Box sx={{ width: '15%', bgcolor: 'background.paper' }}>
           <List>
             {menus.map((menu) => {
-              const { path, label, icon } = menu;
+              const { path, label, icon, id } = menu;
               return (
-                <ListItem component={Link} to={path} disablePadding>
+                <ListItem key={id} component={Link} to={path} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>{icon}</ListItemIcon>
                     <ListItemText primary={label} />
@@ -174,8 +172,8 @@ const Home: FC = () => {
           }}
         >
           {bannerImages?.map((banner) => (
-            <SwiperSlide>
-              <Image src={banner} />
+            <SwiperSlide key={banner.id}>
+              <Image src={banner.url} />
             </SwiperSlide>
           ))}
         </Swiper>
