@@ -9,7 +9,7 @@ import {
   Paper,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
-import { loginThunk } from 'app/store/features/auth/authThunks';
+import { signupThunk } from 'app/store/features/auth/authThunks';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,17 +17,13 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link as RouterLink } from 'react-router-dom';
+import { NewUser } from 'modals/User';
 // import { PASSWORD_REGEX } from 'constants/regex';
 
-interface FormValue {
-  email: string;
-  password: string;
-}
-
-const Login: FC = () => {
+const Signup: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const login = useAppSelector((state) => state.auth.login);
+  const signup = useAppSelector((state) => state.auth.signup);
 
   const schema = yup.object().shape({
     email: yup
@@ -44,14 +40,15 @@ const Login: FC = () => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<FormValue>({ resolver: yupResolver(schema) });
+  } = useForm<NewUser>({ resolver: yupResolver(schema) });
 
-  const formSubmitHandler: SubmitHandler<FormValue> = (data: FormValue) =>
-    dispatch(loginThunk(data));
+  const formSubmitHandler: SubmitHandler<NewUser> = (data: NewUser) => {
+    dispatch(signupThunk(data));
+  };
 
   return (
     <>
-      <HelmetMeta title={t('login.title')} />
+      <HelmetMeta title="Signup" />
       <Box
         display="flex"
         alignItems="center"
@@ -69,6 +66,7 @@ const Login: FC = () => {
             boxShadow: '0px 10px 20px 5px rgba(0,0,0,0.1)',
             borderRadius: 4,
             minWidth: '25%',
+            width: 600,
           }}
         >
           <Typography
@@ -85,12 +83,75 @@ const Login: FC = () => {
             margin={2}
             fontWeight="bold"
           >
-            {t('login.title')}
+            Create Account
           </Typography>
-          {login.error && (
-            <Alert severity="error">{t('auth.passwords-not-match')}</Alert>
+          {signup.error && (
+            <Alert severity="error">That email is taken. Try another!</Alert>
+          )}
+          {signup.result && !signup.error && (
+            <Alert severity="success">Account successfully created!</Alert>
           )}
           <Box component="form" onSubmit={handleSubmit(formSubmitHandler)}>
+            <Controller
+              name="name"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="name"
+                  label="Name"
+                  name="name"
+                  autoComplete="name"
+                  autoFocus
+                  error={!!errors.name}
+                  helperText={errors.name ? errors.name.message : ''}
+                />
+              )}
+            />
+            <Controller
+              name="address"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="address"
+                  label="Address"
+                  name="address"
+                  autoComplete="address"
+                  autoFocus
+                  error={!!errors.address}
+                  helperText={errors.address ? errors.address.message : ''}
+                />
+              )}
+            />
+            <Controller
+              name="phone"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="phone"
+                  label="Phone number"
+                  name="phone"
+                  autoComplete="phone"
+                  autoFocus
+                  error={!!errors.phone}
+                  helperText={errors.phone ? errors.phone.message : ''}
+                />
+              )}
+            />
             <Controller
               name="email"
               control={control}
@@ -137,9 +198,9 @@ const Login: FC = () => {
                 type="submit"
                 size="large"
                 sx={{ mt: 4, width: '40%', height: 40 }}
-                disabled={login.loading}
+                disabled={signup.loading}
               >
-                {login.loading ? (
+                {signup.loading ? (
                   <CircularProgress color="inherit" size={24} />
                 ) : (
                   t('btn.submit')
@@ -147,16 +208,9 @@ const Login: FC = () => {
               </Button>
             </Box>
             <Box display="flex" flexWrap="wrap" justifyContent="center" mt={4}>
-              <Link
-                component={RouterLink}
-                to="/auth/forgot-password"
-                underline="none"
-              >
-                Forgot password?
-              </Link>
-              <Typography paddingX={0.75}>or</Typography>
-              <Link component={RouterLink} underline="none" to="/auth/signup">
-                Sign up here
+              <Typography paddingX={0.75}>Has an account?</Typography>
+              <Link component={RouterLink} underline="none" to="/auth/login">
+                Login here
               </Link>
             </Box>
           </Box>
@@ -166,4 +220,4 @@ const Login: FC = () => {
   );
 };
 
-export default Login;
+export default Signup;

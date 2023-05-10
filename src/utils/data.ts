@@ -1,18 +1,11 @@
-export interface IProduct {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  descriptions: string[];
-  specs: unknown;
-  images: string[];
-}
-
 export const bannerImages = [
-  { id: 1, url: 'https://promotions.newegg.com/nepro/23-0253/1920x660.jpg'},
-  { id: 2, url: 'https://promotions.newegg.com/nepro/22-1955/1920x660.jpg'},
-  { id: 3, url: 'https://promotions.newegg.com/nepro/23-0162/1920x660.jpg'},
-  { id: 4, url: 'https://promotions.newegg.com/nepro/23-0248/1920x660_minimal.jpg'},
+  { id: 1, url: 'https://promotions.newegg.com/nepro/23-0253/1920x660.jpg' },
+  { id: 2, url: 'https://promotions.newegg.com/nepro/22-1955/1920x660.jpg' },
+  { id: 3, url: 'https://promotions.newegg.com/nepro/23-0162/1920x660.jpg' },
+  {
+    id: 4,
+    url: 'https://promotions.newegg.com/nepro/23-0248/1920x660_minimal.jpg',
+  },
 ];
 
 export const officeLaptopData = [

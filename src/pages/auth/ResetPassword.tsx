@@ -5,6 +5,7 @@ import {
   CircularProgress,
   TextField,
   Typography,
+  Paper,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { postResetPasswordThunk } from 'app/store/features/auth/authThunks';
@@ -16,8 +17,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useSearchParams } from 'react-router-dom';
 // import { PASSWORD_REGEX } from 'constants/regex';
-import background from 'assets/images/background.jpg';
-import Image from 'components/common/Image';
 
 interface ResetPasswordForm {
   password: string;
@@ -59,39 +58,45 @@ const ResetPassword: FC = () => {
   return (
     <>
       <HelmetMeta title="Reset password" />
-      <Box display="flex">
-        <Box sx={{ width: '50%', height: '93vh' }}>
-          <Image
-            src={background}
-            sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
-          />
-        </Box>
-        <Box
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100vh',
+        }}
+      >
+        <Paper
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            width: '45%',
-            justifyContent: 'center',
+            padding: 5,
+            boxShadow: '0px 10px 20px 5px rgba(0,0,0,0.1)',
+            borderRadius: 4,
+            minWidth: '25%',
           }}
         >
           <Typography
             variant="h4"
-            sx={{
-              textAlign: 'center',
-              mb: 4,
-            }}
+            margin={2}
+            textAlign="center"
+            color="primary"
+          >
+            TECHSHOP
+          </Typography>
+          <Typography
+            variant="h5"
+            textAlign="center"
+            margin={2}
+            fontWeight="bold"
           >
             Reset password
           </Typography>
           {resetPassword.error && (
             <Alert severity="error">Reset password failed!</Alert>
           )}
-          <Box
-            component="form"
-            onSubmit={handleSubmit(formSubmitHandler)}
-            sx={{ mt: 1, width: '50%' }}
-          >
+          <Box component="form" onSubmit={handleSubmit(formSubmitHandler)}>
             <Controller
               name="password"
               control={control}
@@ -136,22 +141,23 @@ const ResetPassword: FC = () => {
                 />
               )}
             />
-            <Button
-              variant="contained"
-              type="submit"
-              size="large"
-              fullWidth
-              sx={{ mt: 4 }}
-              disabled={resetPassword.loading}
-            >
-              {resetPassword.loading ? (
-                <CircularProgress color="inherit" size={24} />
-              ) : (
-                t('btn.submit')
-              )}
-            </Button>
+            <Box display="flex" sx={{ justifyContent: 'center' }}>
+              <Button
+                variant="contained"
+                type="submit"
+                size="large"
+                sx={{ mt: 4, width: '30%', height: 40 }}
+                disabled={resetPassword.loading}
+              >
+                {resetPassword.loading ? (
+                  <CircularProgress color="inherit" size={24} />
+                ) : (
+                  t('btn.submit')
+                )}
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </Paper>
       </Box>
     </>
   );

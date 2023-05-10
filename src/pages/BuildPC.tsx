@@ -45,7 +45,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
-import { IProduct } from 'utils/data';
+import { Product } from 'modals/Product';
 import { useAppDispatch } from 'app/hooks/redux';
 import { addToCart } from 'app/store/features/cart/cartSlice';
 
@@ -120,7 +120,7 @@ const ProductPrice = styled(ProductText)({
 const sumPrice = (system: System): number => {
   let sum = 0;
   const arraySystem = Object.values(system);
-  arraySystem.forEach((item: IProduct | null) => {
+  arraySystem.forEach((item: Product | null) => {
     if (item) sum += item.price;
   });
   return sum;
@@ -128,7 +128,7 @@ const sumPrice = (system: System): number => {
 
 type Component = string;
 
-interface ICPU extends IProduct {
+interface CPU extends Product {
   specs: {
     model: {
       brand: string;
@@ -143,7 +143,7 @@ interface ICPU extends IProduct {
   };
 }
 
-interface IMotherboard extends IProduct {
+interface Motherboard extends Product {
   specs: {
     model: {
       brand: string;
@@ -157,7 +157,7 @@ interface IMotherboard extends IProduct {
 }
 
 interface System {
-  [key: string]: IProduct | null;
+  [key: string]: Product | null;
 }
 
 const rows: Component[] = [
@@ -181,11 +181,11 @@ const ListWrapper = styled(Box)({
   flexDirection: 'column',
 });
 
-const initialSystem: { [key: string]: IProduct | null } = {};
-const initialData: IProduct[] = [];
+const initialSystem: { [key: string]: Product | null } = {};
+const initialData: Product[] = [];
 const initialSocket = '';
 
-const dataMapping: { [key: string]: IProduct[] } = {
+const dataMapping: { [key: string]: Product[] } = {
   cpu: cpuData,
   motherboard: motherboardData,
   memory: memoryData,
@@ -227,15 +227,15 @@ const BuildPC: FC = () => {
     setOpen(false);
   };
 
-  const handleSelect = (item: IProduct) => {
+  const handleSelect = (item: Product) => {
     setSystem({ ...system, [component]: item });
     if (component === 'cpu') {
       setSocket(
-        (item as ICPU).specs.details.cpuSocketType.replace(/Socket /g, ''),
+        (item as CPU).specs.details.cpuSocketType.replace(/Socket /g, ''),
       );
     } else if (component === 'motherboard') {
       setSocket(
-        (item as IMotherboard).specs.supportedCpu.cpuSocketType
+        (item as Motherboard).specs.supportedCpu.cpuSocketType
           .replace(/\*.*$/, '')
           .trim(),
       );
@@ -287,7 +287,7 @@ const BuildPC: FC = () => {
           </TableHead>
           <TableBody>
             {rows.map((row, index) => {
-              const selected: IProduct | null = system[row];
+              const selected: Product | null = system[row];
               return (
                 <StyledTableRow key={row}>
                   <StyledTableCell component="th" scope="row" width={450}>
@@ -392,7 +392,7 @@ const BuildPC: FC = () => {
           onClick={() => {
             if (system) {
               const arraySystem = Object.values(system);
-              arraySystem.forEach((item: IProduct | null) => {
+              arraySystem.forEach((item: Product | null) => {
                 if (item) {
                   dispatch(addToCart(item));
                 }

@@ -6,6 +6,7 @@ import {
   loginThunk,
   postMailThunk,
   postResetPasswordThunk,
+  signupThunk,
 } from './authThunks';
 
 interface State {
@@ -27,6 +28,11 @@ interface State {
     loading: boolean;
     error: boolean;
   };
+  signup: {
+    loading: boolean;
+    error: boolean;
+    result: boolean;
+  };
 }
 
 const initialState: State = {
@@ -47,6 +53,11 @@ const initialState: State = {
   resetPassword: {
     loading: false,
     error: false,
+  },
+  signup: {
+    loading: false,
+    error: false,
+    result: false,
   },
 };
 
@@ -99,6 +110,18 @@ export const authSlice = createSlice({
     });
     builder.addCase(postResetPasswordThunk.fulfilled, (state) => {
       state.resetPassword.loading = false;
+    });
+    builder.addCase(signupThunk.pending, (state) => {
+      state.signup.loading = true;
+    });
+    builder.addCase(signupThunk.rejected, (state) => {
+      state.signup.loading = false;
+      state.signup.error = true;
+    });
+    builder.addCase(signupThunk.fulfilled, (state) => {
+      state.signup.loading = false;
+      state.signup.result = true;
+      state.signup.error = false;
     });
   },
 });

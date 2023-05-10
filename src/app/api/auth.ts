@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { User } from 'modals/User';
+import { User, NewUser } from 'modals/User';
 import { api } from './axios';
 
 export interface LoginParam {
@@ -23,6 +23,9 @@ export interface ResetPasswordParam {
 export const loginApi = async (
   param: LoginParam,
 ): Promise<AxiosResponse<LoginRespone>> => api.post('/auth/login', param);
+
+export const signupApi = async (param: NewUser): Promise<AxiosResponse<User>> =>
+  api.post('/users', param);
 
 export const getUserApi = async (): Promise<AxiosResponse<User>> =>
   api.get('auth/getUser');

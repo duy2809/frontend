@@ -1,20 +1,24 @@
-# Base image
-FROM node:18-alpine
+# build stage
+FROM node:18-alpine as build-stage
 
 # Create app directory
 WORKDIR /app
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
+# Copy package.json and yarn.lock to the container
+COPY package.json yarn.lock ./
 
 # Install app dependencies
-RUN yarn install && yarn cache clean
+RUN yarn install --frozen-lockfile && yarn cache clean
 
-# Bundle app source
+# Copy the rest of the application code to the container
 COPY . .
 
-# Expose the port that the application listens on
-EXPOSE 3000
+# Creates a "build" folder with the production build
+RUN yarn build
 
-# Start the server using the production build
-CMD [ "yarn", "start" ]
+# production stage
+FROM nginx:alpine as production-stage
+
+COPY --from=build-stage /app/build /usr/share/nginx/html
+
+CMD ["nginx", "-g", "daemon off;"]

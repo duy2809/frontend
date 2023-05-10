@@ -60,6 +60,10 @@ export const routes: RouteObject[] = [
         element: <AuthRoute component={() => import('pages/auth/Login')} />,
       },
       {
+        path: 'signup',
+        element: <AuthRoute component={() => import('pages/auth/Signup')} />,
+      },
+      {
         path: 'forgot-password',
         element: (
           <AuthRoute component={() => import('pages/auth/ForgotPassword')} />

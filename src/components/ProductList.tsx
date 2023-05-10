@@ -4,10 +4,10 @@ import Image from 'components/common/Image';
 import { styled } from '@mui/material/styles';
 import { formatPrice } from 'utils/functions';
 import { Link } from 'react-router-dom';
-import { IProduct } from 'utils/data';
+import { Product } from 'modals/Product';
 
 type ListProps = {
-  list: IProduct[];
+  list: Product[];
 };
 
 const ProductListWrapper = styled(Box)({

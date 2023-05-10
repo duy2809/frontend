@@ -8,7 +8,9 @@ import {
   MailParam,
   ResetPasswordParam,
   postResetPasswordApi,
-} from 'app/api/apiAuth';
+  signupApi,
+} from 'app/api/auth';
+import { NewUser } from 'modals/User';
 
 export const loginThunk = createAsyncThunk(
   'auth/login',
@@ -16,6 +18,13 @@ export const loginThunk = createAsyncThunk(
     const { data } = await loginApi(param);
     setAccessToken(data.access_token);
     window.location.href = '/';
+  },
+);
+
+export const signupThunk = createAsyncThunk(
+  'auth/signup',
+  async (param: NewUser) => {
+    await signupApi(param);
   },
 );
 
