@@ -59,7 +59,7 @@ const OfficeLaptop: FC = () => (
         }}
       >
         {laptopBrandData.map((brand) => (
-          <Link to={`?brand=${brand.name}`}>
+          <Link to={`?brand=${brand.name}`} key={brand.id}>
             <Paper
               variant="outlined"
               sx={{

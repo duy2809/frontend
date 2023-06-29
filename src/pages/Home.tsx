@@ -144,8 +144,8 @@ const Home: FC = () => {
   return (
     <>
       <HelmetMeta title={t('home.title')} />
-      <Box sx={{ mt: 3, mb: 3, display: 'flex' }}>
-        <Box sx={{ width: '15%', bgcolor: 'background.paper' }}>
+      <Box display="flex" my={3}>
+        <Box sx={{ minWidth: 225, bgcolor: 'background.paper' }}>
           <List>
             {menus.map((menu) => {
               const { path, label, icon, id } = menu;

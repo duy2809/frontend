@@ -113,9 +113,18 @@ export const routes: RouteObject[] = [
         element: <PrivateRoute component={() => import('pages/admin/Blog')} />,
       },
       {
+        path: 'crawl',
+        element: <PrivateRoute component={() => import('pages/admin/Crawl')} />,
+      },
+      {
         path: 'profile',
         element: <PrivateRoute component={() => import('pages/Profile')} />,
       },
+      {
+        path: 'profile',
+        element: <PrivateRoute component={() => import('pages/Profile')} />,
+      },
+
       {
         path: '403',
         element: <PrivateRoute component={() => import('pages/Page403')} />,

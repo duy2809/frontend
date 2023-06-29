@@ -16,9 +16,6 @@ const theme = createTheme({
       main: '#fafcfd',
     },
   },
-  typography: {
-    fontFamily: 'Open Sans',
-  },
 });
 
 export default theme;

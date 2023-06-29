@@ -124,7 +124,7 @@ const Navbar: FC<ListProps> = ({ admin }) => {
           </Search>
           <Box sx={{ flexGrow: 1, px: 4, display: 'flex' }} />
           {user.data ? (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box display='flex' alignItems='center'>
               {user.data.role === RoleCode.ADMIN && (
                 <Link to="/admin/dashboard">
                   <Button

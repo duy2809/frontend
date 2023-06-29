@@ -109,6 +109,7 @@ import {
 } from 'recharts';
 
 import { formatPrice } from 'utils/functions';
+import { getProductsThunk } from 'app/store/features/product/productThunk';
 
 const dashboardData = [
   {
@@ -177,9 +178,11 @@ const Dashboard: FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const users = useAppSelector((state) => state.user.users.data);
+  const products = useAppSelector((state) => state.product.products.data);
 
   useEffect(() => {
     dispatch(getUsersThunk());
+    dispatch(getProductsThunk());
   }, [dispatch]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -197,6 +200,9 @@ const Dashboard: FC = () => {
     switch (property) {
       case 'users': {
         return users.length;
+      }
+      case 'products': {
+        return products.length;
       }
       default:
         return Math.floor(Math.random() * 100 + 50);

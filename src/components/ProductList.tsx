@@ -15,6 +15,7 @@ const ProductListWrapper = styled(Box)({
   marginBottom: '2rem',
   display: 'flex',
   flexWrap: 'wrap',
+  justifyContent: 'center',
 });
 
 const ItemWrapper = styled(Paper)({
