@@ -82,7 +82,7 @@ const rows = [
   createData('Brazil', 'BR', 210147125, 8515767),
 ];
 
-const Blog: FC = () => {
+const Category: FC = () => {
   const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -104,7 +104,7 @@ const Blog: FC = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Blogs
+          Categories
         </Typography>
         <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 440 }}>
@@ -162,4 +162,4 @@ const Blog: FC = () => {
   );
 };
 
-export default Blog;
+export default Category;

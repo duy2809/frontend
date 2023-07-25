@@ -26,7 +26,6 @@ import * as React from 'react';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { styled } from '@mui/material/styles';
 import Image from 'components/common/Image';
-import Overview from 'components/Overview';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper';
@@ -227,7 +226,6 @@ const ProductDetail: FC = () => {
           </Table>
         </TableContainer>
       </Box>
-      <Overview />
     </>
   );
 };

@@ -24,6 +24,44 @@ export const routes: RouteObject[] = [
         element: <PublicRoute component={() => import('pages/OfficeLaptop')} />,
       },
       {
+        path: 'gaming-laptops',
+        element: <PublicRoute component={() => import('pages/GamingLaptop')} />,
+      },
+      {
+        path: 'office-desktops',
+        element: (
+          <PublicRoute component={() => import('pages/OfficeDesktop')} />
+        ),
+      },
+      {
+        path: 'gaming-desktops',
+        element: (
+          <PublicRoute component={() => import('pages/GamingDesktop')} />
+        ),
+      },
+      {
+        path: 'gaming-consoles',
+        element: (
+          <PublicRoute component={() => import('pages/GamingConsole')} />
+        ),
+      },
+      {
+        path: 'mouses',
+        element: <PublicRoute component={() => import('pages/Mouse')} />,
+      },
+      {
+        path: 'keyboards',
+        element: <PublicRoute component={() => import('pages/Keyboard')} />,
+      },
+      {
+        path: 'storages',
+        element: <PublicRoute component={() => import('pages/Storage')} />,
+      },
+      {
+        path: 'networking',
+        element: <PublicRoute component={() => import('pages/Networking')} />,
+      },
+      {
         path: 'detail/:id',
         element: (
           <PublicRoute component={() => import('pages/ProductDetail')} />
@@ -40,6 +78,12 @@ export const routes: RouteObject[] = [
       {
         path: 'build-pc',
         element: <PublicRoute component={() => import('pages/BuildPC')} />,
+      },
+      {
+        path: 'payment',
+        element: (
+          <PublicRoute component={() => import('pages/PaymentResult')} />
+        ),
       },
       {
         path: '*',
@@ -109,8 +153,10 @@ export const routes: RouteObject[] = [
         element: <PrivateRoute component={() => import('pages/admin/Order')} />,
       },
       {
-        path: 'blogs',
-        element: <PrivateRoute component={() => import('pages/admin/Blog')} />,
+        path: 'categories',
+        element: (
+          <PrivateRoute component={() => import('pages/admin/Category')} />
+        ),
       },
       {
         path: 'crawl',
@@ -120,11 +166,6 @@ export const routes: RouteObject[] = [
         path: 'profile',
         element: <PrivateRoute component={() => import('pages/Profile')} />,
       },
-      {
-        path: 'profile',
-        element: <PrivateRoute component={() => import('pages/Profile')} />,
-      },
-
       {
         path: '403',
         element: <PrivateRoute component={() => import('pages/Page403')} />,

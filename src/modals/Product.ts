@@ -1,4 +1,4 @@
-// import { Image } from "./Image";
+import { Image } from './Image';
 
 export interface Product {
   id: number;
@@ -7,7 +7,7 @@ export interface Product {
   quantity: number;
   descriptions: string[];
   specs: unknown;
-  images: string[];
+  images: string[] | any;
 }
 
 // export interface IProduct {

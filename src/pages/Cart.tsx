@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Demo component
 
 import {
@@ -17,12 +18,17 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import Image from 'components/common/Image';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC, useState } from 'react';
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import {
@@ -31,6 +37,7 @@ import {
   removeItem,
 } from 'app/store/features/cart/cartSlice';
 import { calculateSum, formatPrice } from 'utils/functions';
+import { postPaymentThunk } from 'app/store/features/payment/paymentThunk';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -49,6 +56,7 @@ const CartWrapper = styled(Box)({
   width: '100%',
   display: 'flex',
   marginTop: '2rem',
+  marginBottom: '2rem',
 });
 
 const CartListWrapper = styled(Box)({
@@ -97,16 +105,30 @@ const ProductPrice = styled(ProductText)({
 });
 
 const SummaryWrap = styled(Paper)({
-  width: '30%',
   padding: 20,
-  display: 'inline',
   '&:hover': {
     boxShadow:
       'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
   },
   height: 'fit-content',
+  top: 300,
   position: 'sticky',
+});
+
+const PaymentWrap = styled(Paper)({
+  padding: 20,
+  '&:hover': {
+    boxShadow:
+      'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
+  },
   top: 100,
+  position: 'sticky',
+  marginBottom: 20,
+});
+
+const RightColumn = styled(Box)({
+  width: '30%',
+  display: 'inline',
 });
 
 const SummaryPrice = styled(ProductText)({
@@ -117,9 +139,18 @@ const Cart: FC = () => {
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cart.cart);
   const [open, setOpen] = useState(false);
+  const [method, setMethod] = useState('1');
 
-  const handleClick = () => {
-    setOpen(true);
+  const handleClick = async () => {
+    if (method === '1') {
+      setOpen(true);
+    } else {
+      await dispatch(postPaymentThunk({ amount: calculateSum(cart) }));
+    }
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMethod((event.target as HTMLInputElement).value);
   };
 
   const handleClose = (
@@ -195,73 +226,98 @@ const Cart: FC = () => {
               );
             })}
           </CartListWrapper>
-          <SummaryWrap variant="outlined">
-            <Box display="flex">
-              <ReceiptIcon fontSize="large" />
-              <Typography variant="h6" sx={{ ml: 2 }}>
-                Summary
-              </Typography>
-            </Box>
-            <Box
-              display="flex"
-              sx={{
-                marginY: 2,
-                width: '100%',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography>Provisional</Typography>
-              <ProductText>{formatPrice(calculateSum(cart))}</ProductText>
-            </Box>
-            <Box
-              display="flex"
-              sx={{
-                marginY: 2,
-                width: '100%',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography>Voucher</Typography>
-              <ProductText>0</ProductText>
-            </Box>
-            <Divider />
-            <Box
-              display="flex"
-              sx={{
-                marginY: 2,
-                width: '100%',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Typography>Total</Typography>
-              <SummaryPrice>{formatPrice(calculateSum(cart))}</SummaryPrice>
-            </Box>
-            <Button
-              variant="contained"
-              color="error"
-              sx={{ width: '100%', paddingY: 1 }}
-              onClick={handleClick}
-            >
-              Order &gt;
-            </Button>
-            <Snackbar
-              open={open}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-              }}
-              autoHideDuration={6000}
-              onClose={handleClose}
-            >
-              <Alert
-                onClose={handleClose}
-                severity="success"
-                sx={{ width: '100%' }}
+          <RightColumn>
+            <PaymentWrap variant="outlined">
+              <Box display="flex" mb={2}>
+                <PaymentsIcon fontSize="large" />
+                <Typography variant="h6" sx={{ ml: 2 }}>
+                  Payment Method
+                </Typography>
+              </Box>
+              <FormControl>
+                <RadioGroup
+                  aria-labelledby="demo-controlled-radio-buttons-group"
+                  name="controlled-radio-buttons-group"
+                  value={method}
+                  onChange={handleChange}
+                >
+                  <FormControlLabel value="1" control={<Radio />} label="COD" />
+                  <FormControlLabel
+                    value="2"
+                    control={<Radio />}
+                    label="Internet Banking"
+                  />
+                </RadioGroup>
+              </FormControl>
+            </PaymentWrap>
+            <SummaryWrap variant="outlined">
+              <Box display="flex">
+                <ReceiptIcon fontSize="large" />
+                <Typography variant="h6" sx={{ ml: 2 }}>
+                  Summary
+                </Typography>
+              </Box>
+              <Box
+                display="flex"
+                sx={{
+                  marginY: 2,
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}
               >
-                Order successfully!
-              </Alert>
-            </Snackbar>
-          </SummaryWrap>
+                <Typography>Provisional</Typography>
+                <ProductText>{formatPrice(calculateSum(cart))}</ProductText>
+              </Box>
+              <Box
+                display="flex"
+                sx={{
+                  marginY: 2,
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography>Voucher</Typography>
+                <ProductText>0</ProductText>
+              </Box>
+              <Divider />
+              <Box
+                display="flex"
+                sx={{
+                  marginY: 2,
+                  width: '100%',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography>Total</Typography>
+                <SummaryPrice>{formatPrice(calculateSum(cart))}</SummaryPrice>
+              </Box>
+              <Button
+                variant="contained"
+                color="error"
+                sx={{ width: '100%', paddingY: 1 }}
+                onClick={handleClick}
+              >
+                {method === '1' ? 'Place Order' : 'Pay Now'}
+              </Button>
+              <Snackbar
+                open={open}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                autoHideDuration={6000}
+                onClose={handleClose}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="success"
+                  sx={{ width: '100%' }}
+                >
+                  Order successfully!
+                </Alert>
+              </Snackbar>
+            </SummaryWrap>
+          </RightColumn>
         </CartWrapper>
       ) : (
         <Box

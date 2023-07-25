@@ -45,8 +45,8 @@ const listMenu = [
   },
   {
     id: 4,
-    path: 'blogs',
-    label: 'Blog',
+    path: 'categories',
+    label: 'Categories',
     icon: <BookIcon />,
   },
 ];

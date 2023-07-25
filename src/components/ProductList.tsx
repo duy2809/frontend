@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { FC } from 'react';
 import { Paper, Box, Typography } from '@mui/material';
 import Image from 'components/common/Image';
@@ -59,11 +60,12 @@ const ProductList: FC<ListProps> = ({ list }) => (
   <ProductListWrapper>
     {list.map((item) => {
       const { images, name, price, id } = item;
+      const { url } = images[0];
       return (
         <Link to={`/detail/${id}`} key={id}>
           <ItemWrapper variant="outlined">
             <ImageWrapper>
-              <ItemImage src={images[0]} />
+              <ItemImage src={url || images[0]} />
             </ImageWrapper>
             <ProductName noWrap align="center">
               {name}

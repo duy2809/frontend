@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Demo component
 
 import {
@@ -11,6 +12,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Card,
 } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
@@ -268,7 +270,12 @@ const BuildPC: FC = () => {
         }}
       >
         <Typography variant="h4">⚒️ BUILD YOUR PC</Typography>
-        {socket && <Chip label={`Socket: ${socket}`} variant="outlined" />}
+        {/* {socket && <Chip label={`Socket: ${socket}`} variant="outlined" />} */}
+        {socket && (
+          <Paper elevation={2} sx={{ py: 0.75, px: 2.5 }}>
+            <Typography variant="h6">Socket: {socket}</Typography>
+          </Paper>
+        )}
         <ProductPrice sx={{ width: 'inherit', fontSize: 23 }}>
           Estimated cost: {formatPrice(sumPrice(system))}
         </ProductPrice>

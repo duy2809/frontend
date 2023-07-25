@@ -110,6 +110,7 @@ import {
 
 import { formatPrice } from 'utils/functions';
 import { getProductsThunk } from 'app/store/features/product/productThunk';
+import { getCategoriesThunk } from 'app/store/features/category/categoryThunk';
 
 const dashboardData = [
   {
@@ -141,8 +142,8 @@ const dashboardData = [
   },
   {
     id: 4,
-    title: 'Blogs',
-    path: 'blogs',
+    title: 'Categories',
+    path: 'categories',
     color: 'green',
     percent: 4,
     trendIcon: <KeyboardArrowUpIcon color="success" fontSize="large" />,
@@ -161,13 +162,13 @@ const dashboardData = [
 ];
 
 const chartData = [
-  { name: 'Page A', uv: 4000, pv: 2400, amt: 2400 },
-  { name: 'Page B', uv: 3000, pv: 1398, amt: 2210 },
-  { name: 'Page C', uv: 2000, pv: 9800, amt: 2290 },
-  { name: 'Page D', uv: 2780, pv: 3908, amt: 2000 },
-  { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
-  { name: 'Page F', uv: 2390, pv: 3800, amt: 2500 },
-  { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
+  { name: 'Q4/2021', console: 4000, pc: 2400, laptop: 2400 },
+  { name: 'Q1/2022', console: 3000, pc: 1398, laptop: 2210 },
+  { name: 'Q2/2022', console: 2000, pc: 9800, laptop: 2290 },
+  { name: 'Q3/2022', console: 2780, pc: 3908, laptop: 2000 },
+  { name: 'Q4/2022', console: 1890, pc: 4800, laptop: 2181 },
+  { name: 'Q1/2023', console: 2390, pc: 3800, laptop: 2500 },
+  { name: 'Q2/2023', console: 3490, pc: 4300, laptop: 2100 },
 ];
 
 const Dashboard: FC = () => {
@@ -179,10 +180,12 @@ const Dashboard: FC = () => {
 
   const users = useAppSelector((state) => state.user.users.data);
   const products = useAppSelector((state) => state.product.products.data);
+  const categories = useAppSelector((state) => state.category.categories.data);
 
   useEffect(() => {
     dispatch(getUsersThunk());
     dispatch(getProductsThunk());
+    dispatch(getCategoriesThunk());
   }, [dispatch]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -203,6 +206,9 @@ const Dashboard: FC = () => {
       }
       case 'products': {
         return products.length;
+      }
+      case 'categories': {
+        return categories.length;
       }
       default:
         return Math.floor(Math.random() * 100 + 50);
@@ -274,7 +280,7 @@ const Dashboard: FC = () => {
             }}
           >
             <Typography variant="h6" textAlign="center" sx={{ mb: 3 }}>
-              Chart
+              Revenue Chart
             </Typography>
             <ResponsiveContainer className="chart" height={400}>
               <ComposedChart height={400} data={chartData}>
@@ -285,12 +291,12 @@ const Dashboard: FC = () => {
                 <CartesianGrid stroke="#f5f5f5" />
                 <Area
                   type="monotone"
-                  dataKey="amt"
+                  dataKey="laptop"
                   fill="#8884d8"
                   stroke="#8884d8"
                 />
-                <Bar dataKey="pv" barSize={20} fill="#413ea0" />
-                <Line type="monotone" dataKey="uv" stroke="#ff7300" />
+                <Bar dataKey="pc" barSize={20} fill="#413ea0" />
+                <Line type="monotone" dataKey="console" stroke="#ff7300" />
               </ComposedChart>
             </ResponsiveContainer>
           </Paper>

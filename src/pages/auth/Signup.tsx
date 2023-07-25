@@ -7,6 +7,8 @@ import {
   Typography,
   Link,
   Paper,
+  IconButton,
+  styled,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { signupThunk } from 'app/store/features/auth/authThunks';
@@ -18,11 +20,19 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Link as RouterLink } from 'react-router-dom';
 import { NewUser } from 'modals/User';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 // import { PASSWORD_REGEX } from 'constants/regex';
+
+const StyledLink = styled(RouterLink)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  textDecoration: 'none',
+}));
 
 const Signup: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const signup = useAppSelector((state) => state.auth.signup);
 
   const schema = yup.object().shape({
@@ -67,15 +77,21 @@ const Signup: FC = () => {
             borderRadius: 4,
             minWidth: '25%',
             width: 600,
+            position: 'relative',
           }}
         >
-          <Typography
-            variant="h4"
-            margin={2}
-            textAlign="center"
-            color="primary"
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: 20,
+              left: 20,
+            }}
+            onClick={() => navigate('/auth/login')}
           >
-            TECHSHOP
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" margin={2} textAlign="center">
+            <StyledLink to="/">TECHSHOP</StyledLink>
           </Typography>
           <Typography
             variant="h5"

@@ -6,6 +6,7 @@ import {
   putProductApi,
   deleteProductApi,
   getCrawlProductsApi,
+  getProductsByCategoryApi,
 } from 'app/api/product';
 import { Product, NewProduct } from 'modals/Product';
 
@@ -14,15 +15,29 @@ export const getProductsThunk = createAsyncThunk('products', async () => {
   return data;
 });
 
-export const getCrawlProductsThunk = createAsyncThunk('products/crawl', async (source: string) => {
-  const { data } = await getCrawlProductsApi(source);
-  return data;
-});
+export const getCrawlProductsThunk = createAsyncThunk(
+  'products/crawl',
+  async (source: string) => {
+    const { data } = await getCrawlProductsApi(source);
+    return data;
+  },
+);
 
-export const getProductThunk = createAsyncThunk('product', async (id: number) => {
-  const { data } = await getProductApi(id);
-  return data;
-});
+export const getProductThunk = createAsyncThunk(
+  'product',
+  async (id: number) => {
+    const { data } = await getProductApi(id);
+    return data;
+  },
+);
+
+export const getProductsByCategoryThunk = createAsyncThunk(
+  'products/category',
+  async (id: number) => {
+    const { data } = await getProductsByCategoryApi(id);
+    return data;
+  },
+);
 
 export const postProductThunk = createAsyncThunk(
   'product/post',

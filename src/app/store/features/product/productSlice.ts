@@ -6,11 +6,17 @@ import {
   postProductThunk,
   putProductThunk,
   deleteProductThunk,
-  getCrawlProductsThunk
+  getCrawlProductsThunk,
+  getProductsByCategoryThunk,
 } from './productThunk';
 
 interface State {
   products: {
+    data: Product[];
+    loading: boolean;
+    error: boolean;
+  };
+  productsByCategory: {
     data: Product[];
     loading: boolean;
     error: boolean;
@@ -44,6 +50,11 @@ interface State {
 
 const initialState: State = {
   products: {
+    data: [],
+    loading: false,
+    error: false,
+  },
+  productsByCategory: {
     data: [],
     loading: false,
     error: false,
@@ -84,7 +95,10 @@ export const userSlice = createSlice({
     },
     resetCrawlProducts: (state) => {
       state.crawlProducts = initialState.crawlProducts;
-    }
+    },
+    resetProductsByCategory: (state) => {
+      state.productsByCategory = initialState.productsByCategory;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getProductsThunk.pending, (state) => {
@@ -97,6 +111,17 @@ export const userSlice = createSlice({
     builder.addCase(getProductsThunk.fulfilled, (state, action) => {
       state.products.loading = false;
       state.products.data = action.payload;
+    });
+    builder.addCase(getProductsByCategoryThunk.pending, (state) => {
+      state.productsByCategory.loading = true;
+    });
+    builder.addCase(getProductsByCategoryThunk.rejected, (state) => {
+      state.productsByCategory.loading = false;
+      state.productsByCategory.error = true;
+    });
+    builder.addCase(getProductsByCategoryThunk.fulfilled, (state, action) => {
+      state.productsByCategory.loading = false;
+      state.productsByCategory.data = action.payload;
     });
     builder.addCase(getProductThunk.pending, (state) => {
       state.product.loading = true;
@@ -160,4 +185,5 @@ export const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-export const { resetProduct, resetCrawlProducts } = userSlice.actions;
+export const { resetProduct, resetCrawlProducts, resetProductsByCategory } =
+  userSlice.actions;

@@ -7,6 +7,7 @@ import {
   Typography,
   Link,
   Paper,
+  styled,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { loginThunk } from 'app/store/features/auth/authThunks';
@@ -23,6 +24,11 @@ interface FormValue {
   email: string;
   password: string;
 }
+
+const StyledLink = styled(RouterLink)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  textDecoration: 'none',
+}));
 
 const Login: FC = () => {
   const { t } = useTranslation();
@@ -71,13 +77,8 @@ const Login: FC = () => {
             minWidth: '25%',
           }}
         >
-          <Typography
-            variant="h4"
-            margin={2}
-            textAlign="center"
-            color="primary"
-          >
-            TECHSHOP
+          <Typography variant="h4" margin={2} textAlign="center">
+            <StyledLink to="/">TECHSHOP</StyledLink>
           </Typography>
           <Typography
             variant="h5"

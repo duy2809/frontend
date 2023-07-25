@@ -1,5 +1,8 @@
 html {
   overflow-y: scroll;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 200px;
 }
 
 body {

@@ -38,7 +38,7 @@ const Search: FC = () => {
 
   return (
     <>
-      <HelmetMeta title="Office Laptop" />
+      <HelmetMeta title="Search" />
       <Breadcrumbs
         sx={{ mt: 3, mb: 3 }}
         separator={<NavigateNextIcon fontSize="small" />}

@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://api.anhdd.site/v1';
+export const BASE_URL = 'http://localhost:8080/v1';

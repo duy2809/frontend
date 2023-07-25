@@ -6,6 +6,8 @@ import {
   TextField,
   Typography,
   Paper,
+  IconButton,
+  styled,
 } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import HelmetMeta from 'components/common/HelmetMeta';
@@ -15,14 +17,22 @@ import { Controller, useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { postMailThunk } from 'app/store/features/auth/authThunks';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface FormValue {
   email: string;
 }
 
+const StyledLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.primary.main,
+  textDecoration: 'none',
+}));
+
 const ForgotPassword: FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const sendMail = useAppSelector((state) => state.auth.sendMail);
 
   const schema = yup.object().shape({
@@ -62,15 +72,21 @@ const ForgotPassword: FC = () => {
             boxShadow: '0px 10px 20px 5px rgba(0,0,0,0.1)',
             borderRadius: 4,
             minWidth: '25%',
+            position: 'relative',
           }}
         >
-          <Typography
-            variant="h4"
-            margin={2}
-            textAlign="center"
-            color="primary"
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: 20,
+              left: 20,
+            }}
+            onClick={() => navigate('/auth/login')}
           >
-            TECHSHOP
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" margin={2} textAlign="center">
+            <StyledLink to="/">TECHSHOP</StyledLink>
           </Typography>
           <Typography
             variant="h5"
