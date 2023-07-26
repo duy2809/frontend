@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Demo component
 
 import { Typography, Box, Toolbar, Paper } from '@mui/material';
 import HelmetMeta from 'components/common/HelmetMeta';
-import { FC, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { FC, useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,80 +13,65 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
-interface Column {
-  id: 'name' | 'code' | 'population' | 'size' | 'density';
-  label: string;
-  minWidth?: number;
-  align?: 'right';
-  format?: (value: number) => string;
-}
-
-const columns: readonly Column[] = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-  {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toFixed(2),
-  },
-];
-
-interface Data {
-  name: string;
-  code: string;
-  population: number;
-  size: number;
-  density: number;
-}
-
-function createData(
-  name: string,
-  code: string,
-  population: number,
-  size: number,
-): Data {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
+import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
+import { format } from 'date-fns';
+import { Category as CategoryType } from 'modals/Category';
+import { resetCategories } from 'app/store/features/category/categorySlice';
+import { getCategoriesThunk } from 'app/store/features/category/categoryThunk';
 
 const Category: FC = () => {
-  const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const dispatch = useAppDispatch();
+  const categories = useAppSelector((state) => state.category.categories.data);
+
+  interface Column {
+    id: 'id' | 'name' | 'description' | 'created_at' | 'updated_at';
+    label: string;
+    minWidth?: number;
+    align?: 'right';
+    format?: (value: number) => string;
+  }
+
+  const columns: readonly Column[] = [
+    { id: 'id', label: 'ID' },
+    { id: 'name', label: 'Name' },
+    { id: 'description', label: 'Description' },
+    { id: 'created_at', label: 'Created At' },
+    { id: 'updated_at', label: 'Updated At' },
+  ];
+
+  interface Data {
+    id: number;
+    name: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+  }
+
+  function createDataRow(list: CategoryType[]): Data[] {
+    const data: Data[] = [];
+    list.forEach((item) => {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { id, name, description, created_at, updated_at } = item;
+      data.push({
+        id,
+        name,
+        description,
+        created_at: format(new Date(created_at), 'dd-MM-yyyy HH:mm'),
+        updated_at: format(new Date(updated_at), 'dd-MM-yyyy HH:mm'),
+      });
+    });
+    return data;
+  }
+
+  const rows = categories ? createDataRow(categories) : [];
+
+  useEffect(() => {
+    dispatch(resetCategories());
+    dispatch(getCategoriesThunk());
+  }, [dispatch]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -98,16 +84,18 @@ const Category: FC = () => {
     setPage(0);
   };
 
+  if (!categories || rows.length === 0) return <></>;
+
   return (
     <>
-      <HelmetMeta title={t('dashboard.title')} />
+      <HelmetMeta title="Categories" />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Typography variant="h4" sx={{ mb: 5 }}>
           Categories
         </Typography>
         <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+          <TableContainer sx={{ maxHeight: 700 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -126,12 +114,7 @@ const Category: FC = () => {
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.code}
-                    >
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (

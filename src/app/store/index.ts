@@ -8,6 +8,7 @@ import productReducer from './features/product/productSlice';
 import paymentReducer from './features/payment/paymentSlice';
 import brandReducer from './features/brand/brandSlice';
 import categoryReducer from './features/category/categorySlice';
+import orderReducer from './features/order/orderSlice';
 
 const production = process.env.NODE_ENV === 'production';
 
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   payment: paymentReducer,
   brand: brandReducer,
   category: categoryReducer,
+  order: orderReducer,
 });
 
 const middleware = (getDefaultMiddleware: CurriedGetDefaultMiddleware) =>

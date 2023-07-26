@@ -34,6 +34,7 @@ import {
   postUserThunk,
   deleteUserThunk,
 } from 'app/store/features/user/userThunk';
+import { format } from 'date-fns';
 
 interface CreateModalProps {
   columns: MRT_ColumnDef<NewUser>[];

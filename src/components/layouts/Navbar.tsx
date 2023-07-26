@@ -124,7 +124,7 @@ const Navbar: FC<ListProps> = ({ admin }) => {
           </Search>
           <Box sx={{ flexGrow: 1, px: 4, display: 'flex' }} />
           {user.data ? (
-            <Box display='flex' alignItems='center'>
+            <Box display="flex" alignItems="center">
               {user.data.role === RoleCode.ADMIN && (
                 <Link to="/admin/dashboard">
                   <Button
@@ -138,14 +138,16 @@ const Navbar: FC<ListProps> = ({ admin }) => {
                 </Link>
               )}
               {user.data.name && (
-                <Button
-                  color="inherit"
-                  variant="text"
-                  startIcon={<AccountCircle />}
-                  sx={{ display: 'flex', alignItems: 'center', mr: 3 }}
-                >
-                  Welcome, {user.data.name}
-                </Button>
+                <Link to="/user/orders">
+                  <Button
+                    color="secondary"
+                    variant="text"
+                    startIcon={<AccountCircle />}
+                    sx={{ display: 'flex', alignItems: 'center', mr: 3 }}
+                  >
+                    Welcome, {user.data.name}
+                  </Button>
+                </Link>
               )}
               <Button
                 color="inherit"

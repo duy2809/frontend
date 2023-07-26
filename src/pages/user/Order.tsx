@@ -13,11 +13,11 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
-import { getOrdersThunk } from 'app/store/features/order/orderThunk';
+import { getOrdersByUserThunk } from 'app/store/features/order/orderThunk';
 import { Order as OrderType } from '../../modals/Order';
 import { formatPrice } from 'utils/functions';
 import { format } from 'date-fns';
-import { resetOrders } from 'app/store/features/order/orderSlice';
+import { resetOrdersByUser } from 'app/store/features/order/orderSlice';
 
 const calculateTotal = (list: any[]): number => {
   let total = 0;
@@ -38,10 +38,11 @@ const Order: FC = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const dispatch = useAppDispatch();
-  const orders = useAppSelector((state) => state.order.orders.data);
+  const orders = useAppSelector((state) => state.order.ordersByUser.data);
+  const user = useAppSelector((state) => state.auth.user.data);
 
   interface Column {
-    id: 'id' | 'total' | 'user' | 'payment' | 'created_at' | 'status';
+    id: 'id' | 'total' | 'created_at' | 'status';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -49,18 +50,14 @@ const Order: FC = () => {
   }
 
   const columns: readonly Column[] = [
-    { id: 'id', label: 'ID' },
-    { id: 'user', label: 'User' },
-    { id: 'payment', label: 'Payment method' },
+    { id: 'id', label: 'Order ID' },
     { id: 'total', label: 'Total' },
-    { id: 'status', label: 'Status' },
     { id: 'created_at', label: 'Order Placed Time' },
+    { id: 'status', label: 'Status' },
   ];
 
   interface Data {
     id: number;
-    user: string | undefined;
-    payment: string | undefined;
     total: string | undefined | number;
     created_at: string;
     status: string;
@@ -70,12 +67,10 @@ const Order: FC = () => {
     const data: Data[] = [];
     list.forEach((item) => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { id, created_at, status, user, payment } = item;
+      const { id, created_at, status } = item;
       const total = formatPrice(calculateTotal(item.orderToProducts));
       data.push({
         id,
-        user: user?.name,
-        payment: payment?.name,
         total,
         created_at: format(new Date(created_at), 'dd-MM-yyyy HH:mm'),
         status,
@@ -87,9 +82,9 @@ const Order: FC = () => {
   const rows = orders ? createDataRow(orders) : [];
 
   useEffect(() => {
-    dispatch(resetOrders());
-    dispatch(getOrdersThunk());
-  }, [dispatch]);
+    dispatch(resetOrdersByUser());
+    if (user) dispatch(getOrdersByUserThunk(user.id));
+  }, [dispatch, user]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -106,13 +101,13 @@ const Order: FC = () => {
 
   return (
     <>
-      <HelmetMeta title="Order" />
+      <HelmetMeta title="Order History" />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Orders
+          Order History
         </Typography>
-        <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden' }}>
+        <Paper variant="outlined" sx={{ width: '50%', overflow: 'hidden' }}>
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>

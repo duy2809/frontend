@@ -5,4 +5,6 @@ export interface Brand {
   name: string;
   description: string;
   image: Image;
+  created_at: string;
+  updated_at: string;
 }

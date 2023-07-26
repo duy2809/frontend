@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Demo component
 
 import { Typography, Box, Toolbar, Paper } from '@mui/material';
@@ -13,6 +14,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import ListIcon from '@mui/icons-material/List';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import BookIcon from '@mui/icons-material/Book';
+import StarIcon from '@mui/icons-material/Star';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -24,76 +26,12 @@ import TableRow from '@mui/material/TableRow';
 
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { getUsersThunk } from 'app/store/features/user/userThunk';
-
-interface Column {
-  id: 'name' | 'code' | 'population' | 'size' | 'density';
-  label: string;
-  minWidth?: number;
-  align?: 'right';
-  format?: (value: number) => string;
-}
-
-const columns: readonly Column[] = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-  {
-    id: 'population',
-    label: 'Population',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'size',
-    label: 'Size\u00a0(km\u00b2)',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'density',
-    label: 'Density',
-    minWidth: 170,
-    align: 'right',
-    format: (value: number) => value.toFixed(2),
-  },
-];
-
-interface Data {
-  name: string;
-  code: string;
-  population: number;
-  size: number;
-  density: number;
-}
-
-function createData(
-  name: string,
-  code: string,
-  population: number,
-  size: number,
-): Data {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
+import { formatPrice } from 'utils/functions';
+import { getProductsThunk } from 'app/store/features/product/productThunk';
+import { getCategoriesThunk } from 'app/store/features/category/categoryThunk';
+import { getOrdersThunk } from 'app/store/features/order/orderThunk';
+import { Order as OrderType } from 'modals/Order';
+import { format } from 'date-fns';
 
 import {
   ResponsiveContainer,
@@ -107,10 +45,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-
-import { formatPrice } from 'utils/functions';
-import { getProductsThunk } from 'app/store/features/product/productThunk';
-import { getCategoriesThunk } from 'app/store/features/category/categoryThunk';
+import { getBrandsThunk } from 'app/store/features/brand/brandThunk';
 
 const dashboardData = [
   {
@@ -151,6 +86,15 @@ const dashboardData = [
   },
   {
     id: 5,
+    title: 'Brands',
+    path: 'brands',
+    color: 'green',
+    percent: 3,
+    trendIcon: <KeyboardArrowUpIcon color="success" fontSize="large" />,
+    icon: <StarIcon />,
+  },
+  {
+    id: 6,
     title: 'Earning',
     path: 'earnings',
     total: formatPrice(10000000),
@@ -164,7 +108,7 @@ const dashboardData = [
 const chartData = [
   { name: 'Q4/2021', console: 4000, pc: 2400, laptop: 2400 },
   { name: 'Q1/2022', console: 3000, pc: 1398, laptop: 2210 },
-  { name: 'Q2/2022', console: 2000, pc: 9800, laptop: 2290 },
+  { name: 'Q2/2022', console: 2000, pc: 5800, laptop: 2290 },
   { name: 'Q3/2022', console: 2780, pc: 3908, laptop: 2000 },
   { name: 'Q4/2022', console: 1890, pc: 4800, laptop: 2181 },
   { name: 'Q1/2023', console: 2390, pc: 3800, laptop: 2500 },
@@ -181,11 +125,15 @@ const Dashboard: FC = () => {
   const users = useAppSelector((state) => state.user.users.data);
   const products = useAppSelector((state) => state.product.products.data);
   const categories = useAppSelector((state) => state.category.categories.data);
+  const orders = useAppSelector((state) => state.order.orders.data);
+  const brands = useAppSelector((state) => state.brand.brands.data);
 
   useEffect(() => {
     dispatch(getUsersThunk());
     dispatch(getProductsThunk());
     dispatch(getCategoriesThunk());
+    dispatch(getOrdersThunk());
+    dispatch(getBrandsThunk());
   }, [dispatch]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -199,6 +147,29 @@ const Dashboard: FC = () => {
     setPage(0);
   };
 
+  const calculateTotal = (list: any[]): number => {
+    let total = 0;
+    list.forEach((item) => {
+      if (item) {
+        const { product, quantity } = item;
+        const { price } = product;
+        if (price && quantity) {
+          total += price * quantity;
+        }
+      }
+    });
+    return total;
+  };
+
+  const calculateEarning = (list: any[]) => {
+    let total = 0;
+    list.forEach((item) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      if (item) total += calculateTotal(item.orderToProducts);
+    });
+    return total;
+  };
+
   const totalCalculate = (property: string) => {
     switch (property) {
       case 'users': {
@@ -210,10 +181,56 @@ const Dashboard: FC = () => {
       case 'categories': {
         return categories.length;
       }
+      case 'orders': {
+        return orders.length;
+      }
+      case 'brands': {
+        return brands.length;
+      }
       default:
-        return Math.floor(Math.random() * 100 + 50);
+        return formatPrice(calculateEarning(orders));
     }
   };
+
+  interface Column {
+    id: 'id' | 'total' | 'created_at' | 'status';
+    label: string;
+    minWidth?: number;
+    align?: 'right';
+    format?: (value: number) => string;
+  }
+
+  const columns: readonly Column[] = [
+    { id: 'id', label: 'Order ID' },
+    { id: 'total', label: 'Total' },
+    { id: 'created_at', label: 'Order Placed Time' },
+    { id: 'status', label: 'Status' },
+  ];
+
+  interface Data {
+    id: number;
+    total: string | undefined | number;
+    created_at: string;
+    status: string;
+  }
+
+  function createDataRow(list: OrderType[]): Data[] {
+    const data: Data[] = [];
+    list.forEach((item) => {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { id, created_at, status } = item;
+      const total = formatPrice(calculateTotal(item.orderToProducts));
+      data.push({
+        id,
+        total,
+        created_at: format(new Date(created_at), 'dd-MM-yyyy HH:mm'),
+        status,
+      });
+    });
+    return data;
+  }
+
+  const rows = orders ? createDataRow(orders) : [];
 
   return (
     <>
@@ -231,7 +248,7 @@ const Dashboard: FC = () => {
                   variant="outlined"
                   sx={{
                     p: 2,
-                    width: 250,
+                    width: 220,
                     marginRight: 3,
                     cursor: 'pointer',
                     '&:hover': {
@@ -308,6 +325,7 @@ const Dashboard: FC = () => {
                 boxShadow:
                   'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
               },
+              width: '45%',
             }}
           >
             <TableContainer sx={{ maxHeight: 440 }}>
@@ -333,7 +351,7 @@ const Dashboard: FC = () => {
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={row.code}
+                        key={row.status}
                       >
                         {columns.map((column) => {
                           const value = row[column.id];

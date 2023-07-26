@@ -86,6 +86,10 @@ export const routes: RouteObject[] = [
         ),
       },
       {
+        path: 'order/result',
+        element: <PublicRoute component={() => import('pages/OrderResult')} />,
+      },
+      {
         path: '*',
         element: <PublicRoute component={() => import('pages/Page404')} />,
       },
@@ -159,12 +163,37 @@ export const routes: RouteObject[] = [
         ),
       },
       {
+        path: 'brands',
+        element: <PrivateRoute component={() => import('pages/admin/Brand')} />,
+      },
+      {
         path: 'crawl',
         element: <PrivateRoute component={() => import('pages/admin/Crawl')} />,
       },
       {
+        path: '403',
+        element: <PrivateRoute component={() => import('pages/Page403')} />,
+      },
+    ],
+  },
+  {
+    path: 'user',
+    element: (
+      <PrivateRoute
+        component={() => import('components/layouts/UserLayout')}
+        permissions={[RoleCode.USER]}
+      />
+    ),
+    children: [
+      {
+        path: 'orders',
+        element: <PrivateRoute component={() => import('pages/user/Order')} />,
+      },
+      {
         path: 'profile',
-        element: <PrivateRoute component={() => import('pages/Profile')} />,
+        element: (
+          <PrivateRoute component={() => import('pages/user/Profile')} />
+        ),
       },
       {
         path: '403',

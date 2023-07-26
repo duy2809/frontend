@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // Demo component
 
 import { Typography, Box, Toolbar, Paper } from '@mui/material';
@@ -13,35 +14,20 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
-import { getOrdersThunk } from 'app/store/features/order/orderThunk';
-import { Order as OrderType } from '../../modals/Order';
-import { formatPrice } from 'utils/functions';
 import { format } from 'date-fns';
-import { resetOrders } from 'app/store/features/order/orderSlice';
+import { Brand as BrandType } from 'modals/Brand';
+import { resetBrands } from 'app/store/features/brand/brandSlice';
+import { getBrandsThunk } from 'app/store/features/brand/brandThunk';
 
-const calculateTotal = (list: any[]): number => {
-  let total = 0;
-  list.forEach((item) => {
-    if (item) {
-      const { product, quantity } = item;
-      const { price } = product;
-      if (price && quantity) {
-        total += price * quantity;
-      }
-    }
-  });
-  return total;
-};
-
-const Order: FC = () => {
+const Brand: FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const dispatch = useAppDispatch();
-  const orders = useAppSelector((state) => state.order.orders.data);
+  const brands = useAppSelector((state) => state.brand.brands.data);
 
   interface Column {
-    id: 'id' | 'total' | 'user' | 'payment' | 'created_at' | 'status';
+    id: 'id' | 'name' | 'description' | 'created_at' | 'updated_at';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -50,45 +36,41 @@ const Order: FC = () => {
 
   const columns: readonly Column[] = [
     { id: 'id', label: 'ID' },
-    { id: 'user', label: 'User' },
-    { id: 'payment', label: 'Payment method' },
-    { id: 'total', label: 'Total' },
-    { id: 'status', label: 'Status' },
-    { id: 'created_at', label: 'Order Placed Time' },
+    { id: 'name', label: 'Name' },
+    { id: 'description', label: 'Description' },
+    { id: 'created_at', label: 'Created At' },
+    { id: 'updated_at', label: 'Updated At' },
   ];
 
   interface Data {
     id: number;
-    user: string | undefined;
-    payment: string | undefined;
-    total: string | undefined | number;
+    name: string;
+    description: string;
     created_at: string;
-    status: string;
+    updated_at: string;
   }
 
-  function createDataRow(list: OrderType[]): Data[] {
+  function createDataRow(list: BrandType[]): Data[] {
     const data: Data[] = [];
     list.forEach((item) => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const { id, created_at, status, user, payment } = item;
-      const total = formatPrice(calculateTotal(item.orderToProducts));
+      const { id, name, description, created_at, updated_at } = item;
       data.push({
         id,
-        user: user?.name,
-        payment: payment?.name,
-        total,
+        name,
+        description,
         created_at: format(new Date(created_at), 'dd-MM-yyyy HH:mm'),
-        status,
+        updated_at: format(new Date(updated_at), 'dd-MM-yyyy HH:mm'),
       });
     });
     return data;
   }
 
-  const rows = orders ? createDataRow(orders) : [];
+  const rows = brands ? createDataRow(brands) : [];
 
   useEffect(() => {
-    dispatch(resetOrders());
-    dispatch(getOrdersThunk());
+    dispatch(resetBrands());
+    dispatch(getBrandsThunk());
   }, [dispatch]);
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -102,18 +84,18 @@ const Order: FC = () => {
     setPage(0);
   };
 
-  if (!orders || rows.length === 0) return <></>;
+  if (!brands || rows.length === 0) return <></>;
 
   return (
     <>
-      <HelmetMeta title="Order" />
+      <HelmetMeta title="Brands" />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Orders
+          Brands
         </Typography>
         <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+          <TableContainer sx={{ maxHeight: 700 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -132,12 +114,7 @@ const Order: FC = () => {
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.status}
-                    >
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (
@@ -168,4 +145,4 @@ const Order: FC = () => {
   );
 };
 
-export default Order;
+export default Brand;

@@ -18,6 +18,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ListIcon from '@mui/icons-material/List';
 import BookIcon from '@mui/icons-material/Book';
+import StarIcon from '@mui/icons-material/Star';
 import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
 import { NavLink } from 'react-router-dom';
 import Navbar from './Navbar';
@@ -48,6 +49,12 @@ const listMenu = [
     path: 'categories',
     label: 'Categories',
     icon: <BookIcon />,
+  },
+  {
+    id: 4,
+    path: 'brands',
+    label: 'Brands',
+    icon: <StarIcon />,
   },
 ];
 

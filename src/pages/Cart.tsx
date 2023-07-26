@@ -38,10 +38,7 @@ import {
 } from 'app/store/features/cart/cartSlice';
 import { calculateSum, formatPrice } from 'utils/functions';
 import { postPaymentThunk } from 'app/store/features/payment/paymentThunk';
-
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
-  <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
-));
+import { postOrderThunk } from 'app/store/features/order/orderThunk';
 
 const breadcrumbs = [
   <Link key="1" to="/">
@@ -138,29 +135,27 @@ const SummaryPrice = styled(ProductText)({
 const Cart: FC = () => {
   const dispatch = useAppDispatch();
   const cart = useAppSelector((state) => state.cart.cart);
-  const [open, setOpen] = useState(false);
+  const user = useAppSelector((state) => state.auth.user.data);
   const [method, setMethod] = useState('1');
 
   const handleClick = async () => {
+    const products: any[] = [];
+    cart.forEach((item) => {
+      const { id, quantityInCart } = item;
+      products.push({ product_id: id, quantity: quantityInCart });
+    });
     if (method === '1') {
-      setOpen(true);
+      const data = { user_id: user?.id || 2, payment_id: 1, products };
+      await dispatch(postOrderThunk(data));
     } else {
+      const data = { user_id: user?.id || 2, payment_id: 2, products };
+      await dispatch(postOrderThunk(data));
       await dispatch(postPaymentThunk({ amount: calculateSum(cart) }));
     }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMethod((event.target as HTMLInputElement).value);
-  };
-
-  const handleClose = (
-    event?: React.SyntheticEvent | Event,
-    reason?: string,
-  ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setOpen(false);
   };
 
   return (
@@ -299,23 +294,6 @@ const Cart: FC = () => {
               >
                 {method === '1' ? 'Place Order' : 'Pay Now'}
               </Button>
-              <Snackbar
-                open={open}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                autoHideDuration={6000}
-                onClose={handleClose}
-              >
-                <Alert
-                  onClose={handleClose}
-                  severity="success"
-                  sx={{ width: '100%' }}
-                >
-                  Order successfully!
-                </Alert>
-              </Snackbar>
             </SummaryWrap>
           </RightColumn>
         </CartWrapper>
