@@ -237,10 +237,10 @@ const Dashboard: FC = () => {
       <HelmetMeta title={t('dashboard.title')} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <Typography variant="h4" sx={{ mb: 5 }}>
+        <Typography variant="h4" sx={{ mb: 3 }}>
           {t('dashboard.title')}
         </Typography>
-        <Box display="flex" sx={{ flexWrap: 'wrap', mb: 3 }}>
+        <Box display="flex" flexWrap="wrap">
           {dashboardData.map(
             ({ id, title, icon, path, trendIcon, color, percent }) => (
               <Link to={`/admin/${path}`} key={id}>
@@ -250,6 +250,7 @@ const Dashboard: FC = () => {
                     p: 2,
                     width: 220,
                     marginRight: 3,
+                    marginBottom: 3,
                     cursor: 'pointer',
                     '&:hover': {
                       boxShadow:
@@ -351,7 +352,7 @@ const Dashboard: FC = () => {
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={row.status}
+                        key={row.id}
                       >
                         {columns.map((column) => {
                           const value = row[column.id];

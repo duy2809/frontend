@@ -18,6 +18,7 @@ interface State {
     error: boolean;
   };
   postOrder: {
+    data: Order;
     loading: boolean;
     error: boolean;
   };
@@ -35,6 +36,7 @@ const initialState: State = {
     error: false,
   },
   postOrder: {
+    data: {} as Order,
     loading: false,
     error: false,
   },
@@ -49,6 +51,9 @@ export const userSlice = createSlice({
     },
     resetOrdersByUser: (state) => {
       state.ordersByUser = initialState.ordersByUser;
+    },
+    resetPostOrder: (state) => {
+      state.postOrder = initialState.postOrder;
     },
   },
   extraReducers: (builder) => {
@@ -81,8 +86,14 @@ export const userSlice = createSlice({
       state.postOrder.loading = false;
       state.postOrder.error = true;
     });
+    builder.addCase(postOrderThunk.fulfilled, (state, action) => {
+      state.postOrder.loading = false;
+      state.postOrder.error = false;
+      state.postOrder.data = action.payload;
+    });
   },
 });
 
 export default userSlice.reducer;
-export const { resetOrders, resetOrdersByUser } = userSlice.actions;
+export const { resetOrders, resetOrdersByUser, resetPostOrder } =
+  userSlice.actions;

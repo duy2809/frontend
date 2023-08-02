@@ -1,5 +1,6 @@
 import App from 'App';
-import { store } from 'app/store';
+import { store, persistor } from 'app/store';
+import { PersistGate } from 'redux-persist/integration/react';
 import 'assets/styles/global.css';
 import DefaultTheme from 'components/common/DefaultTheme';
 import i18n from 'i18next';
@@ -32,13 +33,15 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <HelmetProvider>
-          <DefaultTheme>
-            <App />
-          </DefaultTheme>
-        </HelmetProvider>
-      </BrowserRouter>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <HelmetProvider>
+            <DefaultTheme>
+              <App />
+            </DefaultTheme>
+          </HelmetProvider>
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
   </StrictMode>,
 );

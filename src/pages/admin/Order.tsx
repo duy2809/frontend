@@ -102,7 +102,24 @@ const Order: FC = () => {
     setPage(0);
   };
 
-  if (!orders || rows.length === 0) return <></>;
+  if (!orders || rows.length === 0) {
+    return (
+      <>
+        <HelmetMeta title="Order History" />
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Toolbar />
+          <Typography variant="h4" sx={{ mb: 3 }}>
+            Orders
+          </Typography>
+          <Paper variant="outlined" sx={{ overflow: 'hidden' }}>
+            <Typography variant="h5" sx={{ p: 3 }}>
+              No orders found
+            </Typography>
+          </Paper>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>
@@ -113,7 +130,7 @@ const Order: FC = () => {
           Orders
         </Typography>
         <Paper variant="outlined" sx={{ width: '100%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+          <TableContainer sx={{ maxHeight: 700 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -132,12 +149,7 @@ const Order: FC = () => {
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.status}
-                    >
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (

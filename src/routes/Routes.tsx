@@ -181,13 +181,19 @@ export const routes: RouteObject[] = [
     element: (
       <PrivateRoute
         component={() => import('components/layouts/UserLayout')}
-        permissions={[RoleCode.USER]}
+        permissions={[RoleCode.USER, RoleCode.ADMIN]}
       />
     ),
     children: [
       {
         path: 'orders',
         element: <PrivateRoute component={() => import('pages/user/Order')} />,
+      },
+      {
+        path: 'order-detail/:id',
+        element: (
+          <PrivateRoute component={() => import('pages/user/OrderDetail')} />
+        ),
       },
       {
         path: 'profile',

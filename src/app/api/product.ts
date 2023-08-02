@@ -2,6 +2,14 @@ import { AxiosResponse } from 'axios';
 import { Product, NewProduct } from 'modals/Product';
 import { api } from './axios';
 
+export type Query = {
+  id: number;
+  page?: string;
+  orderBy?: string;
+  sortBy?: string;
+  brand?: string;
+};
+
 export const getProductsApi = async (): Promise<AxiosResponse<Product[]>> =>
   api.get('/products');
 
@@ -14,8 +22,18 @@ export const getProductApi = async (
 ): Promise<AxiosResponse<Product>> => api.get(`/products/${id}`);
 
 export const getProductsByCategoryApi = async (
-  id: number,
-): Promise<AxiosResponse<Product[]>> => api.get(`/products/category/${id}`);
+  param: Query,
+): Promise<AxiosResponse<Product[]>> => {
+  const { id, page, orderBy, sortBy, brand } = param;
+  return api.get(`/products/category/${id}`, {
+    params: {
+      page,
+      orderBy,
+      sortBy,
+      brand,
+    },
+  });
+};
 
 export const putProductApi = async (
   param: Product,
@@ -27,4 +45,4 @@ export const deleteProductApi = async (
 
 export const getCrawlProductsApi = async (
   source: string,
-): Promise<AxiosResponse<Product[]>> => api.get(`/products/${source}`);
+): Promise<AxiosResponse<Product[]>> => api.get(`/products/crawl/${source}`);

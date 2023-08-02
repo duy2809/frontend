@@ -1,14 +1,23 @@
-// Demo component
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any */
 
-import { Typography, Box, Breadcrumbs, Pagination, Paper } from '@mui/material';
+import {
+  Typography,
+  Box,
+  Breadcrumbs,
+  Pagination,
+  Paper,
+  InputLabel,
+  MenuItem,
+  FormControl,
+} from '@mui/material';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { styled } from '@mui/material/styles';
 
-import FilterSelect from 'components/FilterSelect';
 import ProductList from 'components/ProductList';
 import Image from 'components/common/Image';
 
@@ -43,6 +52,20 @@ const PaginationWrapper = styled(Box)({
 
 const CategoryProduct: FC<ListProps> = ({ categoryId, categoryName }) => {
   const [searchParams] = useSearchParams();
+  const brand = searchParams.get('brand') || undefined;
+  const [orderBy, setOrderBy] = useState<string | undefined>();
+  const [sortBy, setSortBy] = useState<string | undefined>();
+  const [sort, setSort] = useState('');
+  const page = searchParams.get('page') || undefined;
+
+  const handleChangeSort = (event: any) => {
+    const { value } = event.target;
+    const [sortValue, orderValue] = value.split('.');
+    setOrderBy(orderValue);
+    setSortBy(sortValue);
+    setSort(event.target.value);
+  };
+
   const breadcrumbs = [
     <Link key="1" to="/">
       Home
@@ -61,9 +84,17 @@ const CategoryProduct: FC<ListProps> = ({ categoryId, categoryName }) => {
   useEffect(() => {
     dispatch(resetProductsByCategory());
     dispatch(resetBrandsByCategory());
-    dispatch(getProductsByCategoryThunk(categoryId));
+    dispatch(
+      getProductsByCategoryThunk({
+        id: categoryId,
+        brand,
+        orderBy,
+        sortBy,
+        page,
+      }),
+    );
     dispatch(getBrandsByCategoryThunk(categoryId));
-  }, [dispatch, categoryId]);
+  }, [dispatch, categoryId, brand, orderBy, sortBy, page]);
 
   return (
     <>
@@ -84,8 +115,8 @@ const CategoryProduct: FC<ListProps> = ({ categoryId, categoryName }) => {
             cursor: 'pointer',
           }}
         >
-          {brands.map((brand) => (
-            <Link to={`?brand=${brand.name}`} key={brand.id}>
+          {brands.map((brandItem) => (
+            <Link to={`?brand=${brandItem.name}`} key={brandItem.id}>
               <Paper
                 variant="outlined"
                 sx={{
@@ -101,14 +132,29 @@ const CategoryProduct: FC<ListProps> = ({ categoryId, categoryName }) => {
                 }}
               >
                 <Image
-                  src={brand.image.url}
+                  src={brandItem.image.url}
                   sx={{ height: 40, maxWidth: 100 }}
                 />
               </Paper>
             </Link>
           ))}
         </Box>
-        <FilterSelect />
+        <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
+          <InputLabel id="sort">Sort</InputLabel>
+          <Select
+            labelId="sort"
+            id="sort"
+            value={sort}
+            label="sort"
+            onChange={handleChangeSort}
+          >
+            <MenuItem value="">None</MenuItem>
+            <MenuItem value="name.ASC">A-Z</MenuItem>
+            <MenuItem value="name.DESC">Z-A</MenuItem>
+            <MenuItem value="price.ASC">Lowest Price</MenuItem>
+            <MenuItem value="price.DESC">Highest Price</MenuItem>
+          </Select>
+        </FormControl>
       </FilterWrapper>
       <ProductList list={products} />
       {/* <PaginationWrapper>

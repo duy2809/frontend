@@ -8,7 +8,6 @@ import { Link, useSearchParams } from 'react-router-dom';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { styled } from '@mui/material/styles';
 
-import FilterSelect from 'components/FilterSelect';
 import ProductList from 'components/ProductList';
 import { allProducts } from 'utils/data';
 
@@ -50,7 +49,6 @@ const Search: FC = () => {
         <Typography variant="h4">
           Search results for &apos;{query}&apos;:
         </Typography>
-        <FilterSelect />
       </FilterWrapper>
       <ProductList list={foundProducts} />
     </>

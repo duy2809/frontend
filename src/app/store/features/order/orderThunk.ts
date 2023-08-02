@@ -20,5 +20,6 @@ export const postOrderThunk = createAsyncThunk(
   async (param: NewOrder) => {
     const { data } = await postOrderApi(param);
     if (param.payment_id === 1) window.location.href = '/order/result';
+    return data;
   },
 );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 // Demo component
 
 import {
@@ -15,17 +16,23 @@ import {
   List,
   ListItem,
   ListItemText,
+  TextField,
+  styled,
 } from '@mui/material';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SendIcon from '@mui/icons-material/Send';
 
-import { FC, useState } from 'react';
+import { FC, Suspense, useState } from 'react';
 import * as React from 'react';
+import { useEffect } from 'react';
+
 import HelmetMeta from 'components/common/HelmetMeta';
-import { styled } from '@mui/material/styles';
 import Image from 'components/common/Image';
+import { Image as ImageType } from 'modals/Image';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper';
@@ -33,11 +40,18 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import { useAppDispatch } from 'app/hooks/redux';
+import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
+import {
+  getReviewsByProductThunk,
+  postReviewThunk,
+} from 'app/store/features/review/reviewThunk';
 import { addToCart } from 'app/store/features/cart/cartSlice';
 import { Link, useParams } from 'react-router-dom';
-import { allProducts } from 'utils/data';
 import { deepClone, formatPrice, toTitleCase } from 'utils/functions';
+import { getProductThunk } from 'app/store/features/product/productThunk';
+import { resetProduct } from 'app/store/features/product/productSlice';
+import { resetReviewsByProduct } from 'app/store/features/review/reviewSlice';
+import Fallback from 'components/common/Fallback';
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>((props, ref) => (
   <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
@@ -82,12 +96,40 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const ProductDetail: FC = () => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
+  const [star, setStar] = useState(0);
+  const [content, setContent] = useState('');
   const { id } = useParams();
-  const product = allProducts.find((item) => item?.id === Number(id));
+  const product = useAppSelector((state) => state.product.product.data);
+  const reviews = useAppSelector((state) => state.review.reviewsByProduct.data);
+  const user = useAppSelector((state) => state.auth.user.data);
+
+  useEffect(() => {
+    dispatch(resetProduct());
+    dispatch(resetReviewsByProduct());
+    dispatch(getProductThunk(Number(id)));
+    dispatch(getReviewsByProductThunk(Number(id)));
+  }, [dispatch, id]);
+
+  const handleStarChange = (
+    event: React.SyntheticEvent,
+    value: number | null,
+  ) => {
+    if (value) setStar(value);
+  };
+
+  const handleSendReview = async () => {
+    if (star && content && user?.id && id) {
+      const data = { star, content, product_id: Number(id), user_id: user.id };
+      await dispatch(postReviewThunk(data));
+      await dispatch(getReviewsByProductThunk(Number(id)));
+      setStar(0);
+      setContent('');
+    }
+  };
 
   const rows: JSX.Element[] = [];
   let specs: Record<string, unknown> = {};
-  if (product) specs = deepClone(product.specs);
+  if (product) specs = deepClone(product.specs) as Record<string, unknown>;
 
   Object.keys(specs).forEach((category) => {
     const categoryObj = specs[category] as Record<string, string>;
@@ -125,6 +167,8 @@ const ProductDetail: FC = () => {
     </Typography>,
   ];
 
+  if (!product) return <Suspense fallback={<Fallback />} />;
+
   return (
     <>
       <HelmetMeta title={product?.name} />
@@ -149,9 +193,9 @@ const ProductDetail: FC = () => {
               clickable: true,
             }}
           >
-            {product?.images.map((image) => (
-              <SwiperSlide>
-                <ItemImage src={image} />
+            {product?.images.map((image: ImageType) => (
+              <SwiperSlide key={image.id}>
+                <ItemImage src={image.url} />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -196,8 +240,8 @@ const ProductDetail: FC = () => {
           <Snackbar
             open={open}
             anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'right',
+              vertical: 'top',
+              horizontal: 'center',
             }}
             autoHideDuration={6000}
             onClose={handleClose}
@@ -205,7 +249,7 @@ const ProductDetail: FC = () => {
             <Alert
               onClose={handleClose}
               severity="success"
-              sx={{ width: '100%' }}
+              sx={{ width: '100%', marginTop: 7 }}
             >
               Add to cart successfully!
             </Alert>
@@ -214,17 +258,77 @@ const ProductDetail: FC = () => {
       </Box>
       <Box sx={{ mt: 5 }}>
         <Typography variant="h5" sx={{ mb: 5 }}>
-          Learn more about {product?.specs?.model?.brand}{' '}
-          {product?.specs?.model?.model}
+          Learn more about this product
         </Typography>
         <TableContainer
           component={Paper}
-          sx={{ width: '70%', marginBottom: 10 }}
+          sx={{ width: '70%', marginBottom: 5 }}
         >
           <Table>
             <TableBody>{rows}</TableBody>
           </Table>
         </TableContainer>
+      </Box>
+      <Box mb={5}>
+        <Typography variant="h5" mb={3}>
+          Reviews ({reviews?.length})
+        </Typography>
+        {reviews?.map((review) => (
+          <Box display="flex" mb={3} key={review.id}>
+            <AccountCircleIcon sx={{ fontSize: 50 }} />
+            <Box ml={2}>
+              <Typography variant="h6">{review.user.name}</Typography>
+              <Rating name="read-only" value={review.star} readOnly />
+              <Typography variant="body1" mt={1}>
+                {review.content}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+        {user && (
+          <>
+            <Box display="flex" mb={2}>
+              <AccountCircleIcon sx={{ fontSize: 50 }} />
+              <Box
+                ml={2}
+                display="flex"
+                flexDirection="column"
+                sx={{ width: '60%', mb: 3 }}
+              >
+                <Typography variant="h6">{user?.name}</Typography>
+                <Rating
+                  name="user-review"
+                  sx={{ mb: 2 }}
+                  value={star}
+                  onChange={handleStarChange}
+                />
+                <Box
+                  display="flex"
+                  justifyContent="flex-start"
+                  alignItems="flex-start"
+                >
+                  <TextField
+                    id="outlined-multiline-static"
+                    placeholder="Write your review here..."
+                    multiline
+                    fullWidth
+                    rows={4}
+                    sx={{ mr: 1 }}
+                    onChange={(e) => setContent(e.target.value)}
+                    value={content}
+                  />
+                  <Button
+                    variant="contained"
+                    endIcon={<SendIcon />}
+                    onClick={handleSendReview}
+                  >
+                    Send
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          </>
+        )}
       </Box>
     </>
   );

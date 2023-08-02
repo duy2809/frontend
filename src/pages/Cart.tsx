@@ -9,9 +9,7 @@ import {
   IconButton,
   Button,
   Divider,
-  Snackbar,
 } from '@mui/material';
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import AddIcon from '@mui/icons-material/Add';
@@ -21,7 +19,7 @@ import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantity
 import PaymentsIcon from '@mui/icons-material/Payments';
 import Image from 'components/common/Image';
 import HelmetMeta from 'components/common/HelmetMeta';
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
@@ -35,10 +33,12 @@ import {
   incrementQuantity,
   decrementQuantity,
   removeItem,
+  removeAllItem,
 } from 'app/store/features/cart/cartSlice';
 import { calculateSum, formatPrice } from 'utils/functions';
 import { postPaymentThunk } from 'app/store/features/payment/paymentThunk';
 import { postOrderThunk } from 'app/store/features/order/orderThunk';
+import { resetPostOrder } from 'app/store/features/order/orderSlice';
 
 const breadcrumbs = [
   <Link key="1" to="/">
@@ -138,6 +138,10 @@ const Cart: FC = () => {
   const user = useAppSelector((state) => state.auth.user.data);
   const [method, setMethod] = useState('1');
 
+  useEffect(() => {
+    dispatch(resetPostOrder());
+  }, [dispatch]);
+
   const handleClick = async () => {
     const products: any[] = [];
     cart.forEach((item) => {
@@ -147,10 +151,17 @@ const Cart: FC = () => {
     if (method === '1') {
       const data = { user_id: user?.id || 2, payment_id: 1, products };
       await dispatch(postOrderThunk(data));
+      dispatch(removeAllItem());
     } else {
       const data = { user_id: user?.id || 2, payment_id: 2, products };
-      await dispatch(postOrderThunk(data));
-      await dispatch(postPaymentThunk({ amount: calculateSum(cart) }));
+      const newOrder: any = await dispatch(postOrderThunk(data));
+      dispatch(removeAllItem());
+      await dispatch(
+        postPaymentThunk({
+          amount: calculateSum(cart),
+          order_id: newOrder.payload.id,
+        }),
+      );
     }
   };
 
@@ -175,9 +186,16 @@ const Cart: FC = () => {
             {cart.map((item) => {
               const { id, name, images, price, quantityInCart } = item;
               return (
-                <ItemWrapper variant="outlined">
+                <ItemWrapper variant="outlined" key={id}>
                   <ImageWrapper>
-                    <ItemImage src={images[0]} alt="Product image" />
+                    <ItemImage
+                      src={
+                        typeof images[0] === 'object'
+                          ? images[0].url
+                          : images[0]
+                      }
+                      alt="Product image"
+                    />
                   </ImageWrapper>
                   <Box
                     sx={{

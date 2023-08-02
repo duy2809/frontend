@@ -69,6 +69,10 @@ export const authSlice = createSlice({
       removeAccessToken();
       window.location.href = '/auth/login';
     },
+    resetLoginStatus: (state) => {
+      state.login.error = false;
+      state.login.loading = false;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loginThunk.pending, (state) => {
@@ -84,10 +88,13 @@ export const authSlice = createSlice({
     builder.addCase(getUserThunk.fulfilled, (state, action) => {
       state.user.data = action.payload;
       state.user.loading = false;
+      state.user.error = false;
     });
     builder.addCase(getUserThunk.rejected, (state) => {
       state.user.loading = false;
       state.user.error = true;
+      state.user.data = null;
+      removeAccessToken();
     });
     builder.addCase(postMailThunk.rejected, (state) => {
       state.sendMail.loading = false;
@@ -127,4 +134,4 @@ export const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { logout } = authSlice.actions;
+export const { logout, resetLoginStatus } = authSlice.actions;

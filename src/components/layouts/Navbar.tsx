@@ -22,6 +22,7 @@ import Image from 'components/common/Image';
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { RoleCode } from 'constants/roles';
+import BuildIcon from '@mui/icons-material/Build';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -31,12 +32,7 @@ const Search = styled('div')(({ theme }) => ({
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(3),
-    width: 'auto',
-  },
+  width: '40%',
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -53,14 +49,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '50ch',
-    },
   },
+  width: '100%',
 }));
 
 type ListProps = {
@@ -122,7 +114,17 @@ const Navbar: FC<ListProps> = ({ admin }) => {
               onKeyDown={handleEnter}
             />
           </Search>
-          <Box sx={{ flexGrow: 1, px: 4, display: 'flex' }} />
+          <Box sx={{ flexGrow: 1, display: 'flex' }} />
+          <Link to="/build-pc">
+            <Button
+              color="secondary"
+              variant="text"
+              startIcon={<BuildIcon />}
+              sx={{ mr: 2, width: '120px' }}
+            >
+              Build PC
+            </Button>
+          </Link>
           {user.data ? (
             <Box display="flex" alignItems="center">
               {user.data.role === RoleCode.ADMIN && (
@@ -131,7 +133,7 @@ const Navbar: FC<ListProps> = ({ admin }) => {
                     color="secondary"
                     variant="text"
                     startIcon={<DashboardIcon />}
-                    sx={{ mr: 3 }}
+                    sx={{ mr: 2, width: '140px' }}
                   >
                     Admin page
                   </Button>
@@ -143,9 +145,9 @@ const Navbar: FC<ListProps> = ({ admin }) => {
                     color="secondary"
                     variant="text"
                     startIcon={<AccountCircle />}
-                    sx={{ display: 'flex', alignItems: 'center', mr: 3 }}
+                    sx={{ mr: 2, width: '140px' }}
                   >
-                    Welcome, {user.data.name}
+                    {user.data.name}
                   </Button>
                 </Link>
               )}

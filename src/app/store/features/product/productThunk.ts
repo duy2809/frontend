@@ -7,6 +7,7 @@ import {
   deleteProductApi,
   getCrawlProductsApi,
   getProductsByCategoryApi,
+  Query,
 } from 'app/api/product';
 import { Product, NewProduct } from 'modals/Product';
 
@@ -33,8 +34,8 @@ export const getProductThunk = createAsyncThunk(
 
 export const getProductsByCategoryThunk = createAsyncThunk(
   'products/category',
-  async (id: number) => {
-    const { data } = await getProductsByCategoryApi(id);
+  async (param: Query) => {
+    const { data } = await getProductsByCategoryApi(param);
     return data;
   },
 );

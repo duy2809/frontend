@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Demo component
 
-import { Typography, Box, Toolbar, Paper } from '@mui/material';
+import { Typography, Box, Toolbar, Paper, Chip } from '@mui/material';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC, useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
@@ -11,12 +11,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import { Link } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from 'app/hooks/redux';
 import { getOrdersByUserThunk } from 'app/store/features/order/orderThunk';
 import { Order as OrderType } from '../../modals/Order';
 import { formatPrice } from 'utils/functions';
-import { format } from 'date-fns';
+import { format, utcToZonedTime } from 'date-fns-tz';
 import { resetOrdersByUser } from 'app/store/features/order/orderSlice';
 
 const calculateTotal = (list: any[]): number => {
@@ -33,6 +34,19 @@ const calculateTotal = (list: any[]): number => {
   return total;
 };
 
+const chipColor = (status: string | number | undefined) => {
+  switch (status) {
+    case 'Pending':
+      return 'warning';
+    case 'Paid':
+      return 'success';
+    case 'Failed':
+      return 'error';
+    default:
+      return 'info';
+  }
+};
+
 const Order: FC = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -42,7 +56,7 @@ const Order: FC = () => {
   const user = useAppSelector((state) => state.auth.user.data);
 
   interface Column {
-    id: 'id' | 'total' | 'created_at' | 'status';
+    id: 'id' | 'total' | 'created_at' | 'status' | 'detail';
     label: string;
     minWidth?: number;
     align?: 'right';
@@ -54,6 +68,7 @@ const Order: FC = () => {
     { id: 'total', label: 'Total' },
     { id: 'created_at', label: 'Order Placed Time' },
     { id: 'status', label: 'Status' },
+    { id: 'detail', label: 'Detail' },
   ];
 
   interface Data {
@@ -61,6 +76,7 @@ const Order: FC = () => {
     total: string | undefined | number;
     created_at: string;
     status: string;
+    detail: string;
   }
 
   function createDataRow(list: OrderType[]): Data[] {
@@ -69,11 +85,14 @@ const Order: FC = () => {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const { id, created_at, status } = item;
       const total = formatPrice(calculateTotal(item.orderToProducts));
+      const date = new Date(created_at);
+      const zonedTime = utcToZonedTime(date, 'Asia/Ho_Chi_Minh')
       data.push({
         id,
         total,
-        created_at: format(new Date(created_at), 'dd-MM-yyyy HH:mm'),
+        created_at: format(zonedTime, 'dd-MM-yyyy HH:mm'),
         status,
+        detail: `/user/order-detail/${id}`,
       });
     });
     return data;
@@ -97,18 +116,35 @@ const Order: FC = () => {
     setPage(0);
   };
 
-  if (!orders || rows.length === 0) return <></>;
+  if (!orders || rows.length === 0) {
+    return (
+      <>
+        <HelmetMeta title="Order History" />
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <Toolbar />
+          <Typography variant="h4" sx={{ mb: 3 }}>
+            Order history
+          </Typography>
+          <Paper variant="outlined" sx={{ overflow: 'hidden' }}>
+            <Typography variant="h5" sx={{ p: 3 }}>
+              You have no orders yet
+            </Typography>
+          </Paper>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>
       <HelmetMeta title="Order History" />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <Typography variant="h4" sx={{ mb: 5 }}>
-          Order History
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Order history
         </Typography>
-        <Paper variant="outlined" sx={{ width: '50%', overflow: 'hidden' }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+        <Paper variant="outlined" sx={{ overflow: 'hidden' }}>
+          <TableContainer sx={{ maxHeight: 700 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -127,14 +163,34 @@ const Order: FC = () => {
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.status}
-                    >
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       {columns.map((column) => {
                         const value = row[column.id];
+                        if (column.id === 'status') {
+                          return (
+                            <TableCell key={column.id} align="left">
+                              <Chip
+                                label={value as string}
+                                color={chipColor(value)}
+                              />
+                            </TableCell>
+                          );
+                        }
+                        if (column.id === 'detail') {
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              <Link
+                                style={{
+                                  color: 'blue',
+                                  textDecoration: 'underline',
+                                }}
+                                to={value as string}
+                              >
+                                View detail
+                              </Link>
+                            </TableCell>
+                          );
+                        }
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.format && typeof value === 'number'

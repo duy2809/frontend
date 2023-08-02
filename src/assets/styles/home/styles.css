@@ -21,6 +21,7 @@
   -ms-flex-align: center;
   -webkit-align-items: center;
   align-items: center;
+  user-select: none;
 }
 
 .swiper-slide img {
