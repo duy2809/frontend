@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Demo component
 
-import { Typography, Box, Toolbar, Paper } from '@mui/material';
+import { Typography, Box, Toolbar, Paper, Chip } from '@mui/material';
 import HelmetMeta from 'components/common/HelmetMeta';
 import { FC, useState, useEffect } from 'react';
 import Table from '@mui/material/Table';
@@ -31,6 +31,19 @@ const calculateTotal = (list: any[]): number => {
     }
   });
   return total;
+};
+
+const chipColor = (status: string | number | undefined) => {
+  switch (status) {
+    case 'Pending':
+      return 'warning';
+    case 'Paid':
+      return 'success';
+    case 'Failed':
+      return 'error';
+    default:
+      return 'info';
+  }
 };
 
 const Order: FC = () => {
@@ -152,6 +165,16 @@ const Order: FC = () => {
                     <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                       {columns.map((column) => {
                         const value = row[column.id];
+                        if (column.id === 'status') {
+                          return (
+                            <TableCell key={column.id} align="left">
+                              <Chip
+                                label={value as string}
+                                color={chipColor(value)}
+                              />
+                            </TableCell>
+                          );
+                        }
                         return (
                           <TableCell key={column.id} align={column.align}>
                             {column.format && typeof value === 'number'
